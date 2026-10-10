@@ -1,0 +1,58 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "total": 3,
+  "entry": [
+    {
+      "fullUrl": "https://example.org/fhir/Patient/pat-001",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-001",
+        "name": [
+          { "use": "usual", "given": ["Mari"], "family": "Lopez" },
+          { "use": "official", "given": ["Maria", "Elena"], "family": "Lopez" }
+        ],
+        "gender": "female",
+        "birthDate": "1980-06-15",
+        "address": [
+          { "use": "work", "city": "Plano", "state": "TX" },
+          { "use": "home", "city": "Dallas", "state": "TX" }
+        ]
+      },
+      "search": { "mode": "match" }
+    },
+    {
+      "fullUrl": "https://example.org/fhir/Patient/pat-002",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-002",
+        "name": [ { "text": "John Q. Smith", "given": ["John"], "family": "Smith" } ],
+        "gender": "male",
+        "birthDate": "1955"
+      },
+      "search": { "mode": "match" }
+    },
+    {
+      "fullUrl": "https://example.org/fhir/Patient/pat-003",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "pat-003",
+        "name": [ { "given": ["Ruth"], "family": "Okafor" } ],
+        "gender": "female",
+        "birthDate": "1940-02-29",
+        "deceasedDateTime": "2021-11-02T08:30:00Z",
+        "address": [ { "city": "Austin", "state": "TX" } ]
+      },
+      "search": { "mode": "match" }
+    },
+    {
+      "resource": {
+        "resourceType": "OperationOutcome",
+        "issue": [
+          { "severity": "information", "code": "informational", "diagnostics": "Search results are synthetic test data." }
+        ]
+      },
+      "search": { "mode": "outcome" }
+    }
+  ]
+}
