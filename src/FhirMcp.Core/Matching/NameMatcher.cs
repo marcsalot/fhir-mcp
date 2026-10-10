@@ -18,7 +18,8 @@ namespace FhirMcp.Core.Matching;
 /// </summary>
 public static class NameMatcher
 {
-    private static readonly char[] Separators = { ' ', '\t', '-', '‐', '‑', '–' };
+    // Spaces, tabs, the ASCII hyphen, and Unicode hyphen (U+2010), non-breaking hyphen (U+2011) and en dash (U+2013).
+    private static readonly char[] Separators = { ' ', '\t', '-', '\u2010', '\u2011', '\u2013' };
 
     /// <summary>Splits a search into normalized words. "Al-Sayed  Fatima" becomes [al, sayed, fatima].</summary>
     public static IReadOnlyList<string> QueryTokens(string query) =>
