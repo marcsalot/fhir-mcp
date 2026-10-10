@@ -1,0 +1,67 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "link": [
+    { "relation": "self", "url": "https://example.org/fhir/Patient?name=x" },
+    { "relation": "next", "url": "https://example.org/fhir/Patient?name=x&_page=2" }
+  ],
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-alsayed",
+        "name": [ { "use": "official", "given": ["Fatima"], "family": "Al-Sayed" } ],
+        "gender": "female",
+        "birthDate": "1988-03-04"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-williamson",
+        "name": [
+          { "use": "official", "given": ["Melony"], "family": "Williamson", "prefix": ["Mrs."] },
+          { "use": "maiden", "given": ["Melony"], "family": "Hammes", "prefix": ["Mrs."] }
+        ],
+        "gender": "female",
+        "birthDate": "1972-09-30"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-smith",
+        "name": [ { "use": "official", "given": ["Adolph"], "family": "Smith" } ],
+        "gender": "male",
+        "birthDate": "1944-11-28"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-smitham",
+        "name": [ { "use": "official", "given": ["Jesus"], "family": "Smitham" } ],
+        "gender": "male",
+        "birthDate": "1953-01-10"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-arisso",
+        "name": [ { "use": "official", "given": ["Andrés"], "family": "Arissó-Test" } ],
+        "gender": "male",
+        "birthDate": "1990-12-01"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "p-obrien",
+        "name": [ { "use": "official", "given": ["Siobhán"], "family": "O'Brien" } ],
+        "gender": "female",
+        "birthDate": "1965-07-21"
+      }
+    }
+  ]
+}

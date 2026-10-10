@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using FhirMcp.Core.Mapping;
+using FhirMcp.Core.Matching;
 using FhirMcp.Core.Models;
 
 namespace FhirMcp.Core.Fhir;
@@ -29,33 +30,99 @@ public sealed class FhirApiClient
         _time = time ?? TimeProvider.System;
     }
 
-    /// <summary>Searches for patients by name and/or birth date.</summary>
-    public async Task<IReadOnlyList<PatientSummary>> SearchPatientsAsync(
+    /// <summary>How many candidates to fetch when extra name words are checked on our side.</summary>
+    internal const int CandidatePoolSize = 100;
+
+    /// <summary>
+    /// Searches for patients by name and/or birth date.
+    ///
+    /// FHIR servers match only one name value at a time, from its start, so the server is
+    /// asked about the most specific word typed (prefix match, hyphens kept), and every word
+    /// is then checked here against all of each candidate's names (see <see cref="NameMatcher"/>).
+    /// If that finds nothing, the search is retried with the server's :contains modifier.
+    /// </summary>
+    public async Task<PatientSearchResult> SearchPatientsAsync(
         PatientSearchCriteria criteria,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(criteria);
         criteria.Validate();
 
-        var query = new List<string>();
-        if (!string.IsNullOrWhiteSpace(criteria.Name))
+        var tokens = string.IsNullOrWhiteSpace(criteria.Name)
+            ? Array.Empty<string>()
+            : NameMatcher.QueryTokens(criteria.Name);
+
+        if (tokens.Count == 0)
         {
-            query.Add("name=" + Uri.EscapeDataString(criteria.Name.Trim()));
+            var (patients, more) = await RunSearchAsync(criteria, anchor: null, tokens, NameMatchMode.None, criteria.MaxResults, cancellationToken);
+            return new PatientSearchResult(patients, NameMatchMode.None, FellBackToContains: false, more);
+        }
+
+        var anchor = PickAnchor(criteria.Name!);
+        var fetch = tokens.Count > 1 ? CandidatePoolSize : criteria.MaxResults;
+
+        if (criteria.Contains)
+        {
+            var (patients, more) = await RunSearchAsync(criteria, anchor, tokens, NameMatchMode.Contains, fetch, cancellationToken);
+            return new PatientSearchResult(patients, NameMatchMode.Contains, FellBackToContains: false, more);
+        }
+
+        var (startsWith, moreStartsWith) = await RunSearchAsync(criteria, anchor, tokens, NameMatchMode.StartsWith, fetch, cancellationToken);
+        if (startsWith.Count > 0)
+        {
+            return new PatientSearchResult(startsWith, NameMatchMode.StartsWith, FellBackToContains: false, moreStartsWith);
+        }
+
+        var (contains, moreContains) = await RunSearchAsync(criteria, anchor, tokens, NameMatchMode.Contains, Math.Max(fetch, CandidatePoolSize), cancellationToken);
+        return new PatientSearchResult(contains, NameMatchMode.Contains, FellBackToContains: true, moreContains);
+    }
+
+    private async Task<(IReadOnlyList<PatientSummary> Patients, bool MoreAvailable)> RunSearchAsync(
+        PatientSearchCriteria criteria,
+        string? anchor,
+        IReadOnlyList<string> tokens,
+        NameMatchMode mode,
+        int fetch,
+        CancellationToken cancellationToken)
+    {
+        var query = new List<string>();
+        if (anchor is not null)
+        {
+            var parameter = mode == NameMatchMode.Contains ? "name:contains=" : "name=";
+            query.Add(parameter + Uri.EscapeDataString(anchor));
         }
         if (criteria.BirthDate is { } birthDate)
         {
             query.Add("birthdate=" + birthDate.ToString("yyyy-MM-dd"));
         }
-        query.Add("_count=" + criteria.MaxResults);
+        query.Add("_count=" + fetch);
 
         using var bundle = await GetJsonAsync("Patient?" + string.Join('&', query), cancellationToken);
         var today = DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime);
+        var contains = mode == NameMatchMode.Contains;
 
-        return ReadEntries(bundle.RootElement, "Patient")
+        var patients = ReadEntries(bundle.RootElement, "Patient")
+            .Where(p => tokens.Count == 0 || NameMatcher.Matches(tokens, NameMatcher.PatientTokens(p), contains))
             .Select(p => PatientMapper.Map(p, today))
             .Take(criteria.MaxResults)
             .ToList();
+
+        return (patients, HasNextPage(bundle.RootElement));
     }
+
+    /// <summary>
+    /// The word sent to the server: the longest one typed, as typed, so a hyphenated
+    /// family name ("Al-Sayed") still matches the server's single stored value.
+    /// </summary>
+    internal static string PickAnchor(string name) =>
+        name.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
+            .OrderByDescending(w => NameMatcher.Normalize(w).Length)
+            .First();
+
+    private static bool HasNextPage(JsonElement bundle) =>
+        bundle.TryGetProperty("link", out var links)
+        && links.ValueKind == JsonValueKind.Array
+        && links.EnumerateArray().Any(l => l.TryGetProperty("relation", out var r) && r.GetString() == "next");
 
     /// <summary>Returns each entry.resource in a Bundle that has the given resourceType.</summary>
     internal static IEnumerable<JsonElement> ReadEntries(JsonElement bundle, string resourceType)

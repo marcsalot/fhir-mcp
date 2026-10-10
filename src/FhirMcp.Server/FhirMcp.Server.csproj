@@ -4,6 +4,12 @@
     <ProjectReference Include="..\FhirMcp.Core\FhirMcp.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>

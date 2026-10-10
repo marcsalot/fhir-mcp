@@ -3,26 +3,33 @@ using System.Text;
 
 namespace FhirMcp.Tests;
 
-/// <summary>Returns a canned response and remembers the last request, so tests never touch the network.</summary>
+/// <summary>
+/// Answers each request from a function of its URL and records every request,
+/// so tests never touch the network and can check exactly what was sent.
+/// </summary>
 internal sealed class FakeHandler : HttpMessageHandler
 {
-    private readonly HttpStatusCode _status;
-    private readonly string _body;
+    private readonly Func<Uri, (HttpStatusCode Status, string Body)> _respond;
 
     public FakeHandler(string body, HttpStatusCode status = HttpStatusCode.OK)
+        : this(_ => (status, body))
     {
-        _body = body;
-        _status = status;
     }
+
+    public FakeHandler(Func<Uri, (HttpStatusCode Status, string Body)> respond) => _respond = respond;
+
+    public List<Uri> Requests { get; } = new();
 
     public HttpRequestMessage? LastRequest { get; private set; }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         LastRequest = request;
-        return Task.FromResult(new HttpResponseMessage(_status)
+        Requests.Add(request.RequestUri!);
+        var (status, body) = _respond(request.RequestUri!);
+        return Task.FromResult(new HttpResponseMessage(status)
         {
-            Content = new StringContent(_body, Encoding.UTF8, "application/fhir+json"),
+            Content = new StringContent(body, Encoding.UTF8, "application/fhir+json"),
         });
     }
 }
@@ -42,4 +49,6 @@ internal static class Fixtures
 {
     public static string Read(string name) =>
         File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Fixtures", name));
+
+    public const string EmptyBundle = """{ "resourceType": "Bundle", "type": "searchset", "total": 0 }""";
 }

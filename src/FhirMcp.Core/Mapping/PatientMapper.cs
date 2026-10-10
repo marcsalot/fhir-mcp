@@ -20,9 +20,12 @@ public static class PatientMapper
         var deceased = IsDeceased(patient);
         var (city, state) = PickAddress(patient);
 
+        var (name, otherNames) = PickNames(patient);
+
         return new PatientSummary(
             Id: id,
-            Name: PickName(patient) ?? "(no name recorded)",
+            Name: name ?? "(no name recorded)",
+            OtherNames: otherNames,
             Gender: GetString(patient, "gender"),
             BirthDate: birthDate,
             Age: birthDate is { } b && !deceased ? AgeOn(b, today) : null,
@@ -31,41 +34,54 @@ public static class PatientMapper
             Deceased: deceased);
     }
 
-    /// <summary>Prefers the official name, then the usual name, then the first one listed.</summary>
-    private static string? PickName(JsonElement patient)
+    /// <summary>
+    /// Picks the display name (official, then usual, then the first listed) and lists the
+    /// patient's other distinct names with their use, such as "Melony Hammes (maiden)".
+    /// </summary>
+    private static (string? Name, IReadOnlyList<string> OtherNames) PickNames(JsonElement patient)
     {
         if (!patient.TryGetProperty("name", out var names) || names.ValueKind != JsonValueKind.Array)
         {
-            return null;
+            return (null, Array.Empty<string>());
         }
 
-        var all = names.EnumerateArray().ToList();
+        var all = names.EnumerateArray()
+            .Select(n => (Use: GetString(n, "use"), Display: Display(n)))
+            .Where(n => n.Display is not null)
+            .ToList();
         if (all.Count == 0)
         {
-            return null;
+            return (null, Array.Empty<string>());
         }
 
-        var chosen = all.FirstOrDefault(n => GetString(n, "use") == "official");
-        if (chosen.ValueKind == JsonValueKind.Undefined)
-        {
-            chosen = all.FirstOrDefault(n => GetString(n, "use") == "usual");
-        }
-        if (chosen.ValueKind == JsonValueKind.Undefined)
-        {
-            chosen = all[0];
-        }
+        var chosenIndex = all.FindIndex(n => n.Use == "official");
+        if (chosenIndex < 0) chosenIndex = all.FindIndex(n => n.Use == "usual");
+        if (chosenIndex < 0) chosenIndex = 0;
 
-        var text = GetString(chosen, "text");
+        var chosen = all[chosenIndex].Display!;
+        var others = all
+            .Where((n, i) => i != chosenIndex && !string.Equals(n.Display, chosen, StringComparison.OrdinalIgnoreCase))
+            .Select(n => n.Use is null ? n.Display! : $"{n.Display} ({n.Use})")
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return (chosen, others);
+    }
+
+    /// <summary>The name's text if recorded, otherwise its given names and family name joined.</summary>
+    private static string? Display(JsonElement name)
+    {
+        var text = GetString(name, "text");
         if (!string.IsNullOrWhiteSpace(text))
         {
             return text.Trim();
         }
 
-        var given = chosen.TryGetProperty("given", out var g) && g.ValueKind == JsonValueKind.Array
-            ? g.EnumerateArray().Select(x => x.GetString()).Where(x => !string.IsNullOrWhiteSpace(x))
+        var given = name.TryGetProperty("given", out var g) && g.ValueKind == JsonValueKind.Array
+            ? g.EnumerateArray().Select(x => x.ValueKind == JsonValueKind.String ? x.GetString() : null)
             : Enumerable.Empty<string?>();
 
-        var parts = given.Append(GetString(chosen, "family")).Where(x => !string.IsNullOrWhiteSpace(x));
+        var parts = given.Append(GetString(name, "family")).Where(x => !string.IsNullOrWhiteSpace(x));
         var joined = string.Join(' ', parts);
         return joined.Length > 0 ? joined : null;
     }

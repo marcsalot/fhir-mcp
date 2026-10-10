@@ -1,41 +1,52 @@
 using System.Net;
 using FhirMcp.Core.Fhir;
+using FhirMcp.Core.Models;
 using Xunit;
 
 namespace FhirMcp.Tests;
 
+/// <summary>Mapping, request shape, limits and error handling. Searches here use a birth date, so no name filtering applies.</summary>
 public class PatientSearchTests
 {
-    private static (FhirApiClient Client, FakeHandler Handler) Create(
-        string body,
-        HttpStatusCode status = HttpStatusCode.OK,
+    private static readonly DateOnly AnyDate = new(1980, 6, 15);
+    private static readonly string Bundle = Fixtures.Read("patient-search-bundle.json");
+
+    internal static (FhirApiClient Client, FakeHandler Handler) Create(
+        FakeHandler handler,
         TimeProvider? time = null)
     {
-        var handler = new FakeHandler(body, status);
         var http = new HttpClient(handler) { BaseAddress = new Uri("https://example.org/fhir/") };
         return (new FhirApiClient(http, time ?? new FixedTime(2026, 6, 14)), handler);
     }
 
-    private static readonly string Bundle = Fixtures.Read("patient-search-bundle.json");
+    private static (FhirApiClient Client, FakeHandler Handler) Create(
+        string body,
+        HttpStatusCode status = HttpStatusCode.OK,
+        TimeProvider? time = null) =>
+        Create(new FakeHandler(body, status), time);
+
+    private static async Task<IReadOnlyList<PatientSummary>> SearchByDate(FhirApiClient client, int max = 10) =>
+        (await client.SearchPatientsAsync(new PatientSearchCriteria(BirthDate: AnyDate, MaxResults: max))).Patients;
 
     [Fact]
     public async Task Returns_only_patients_from_the_bundle()
     {
         var (client, _) = Create(Bundle);
 
-        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "lopez"));
+        var result = await SearchByDate(client);
 
         Assert.Equal(new[] { "pat-001", "pat-002", "pat-003" }, result.Select(p => p.Id).ToArray());
     }
 
     [Fact]
-    public async Task Prefers_the_official_name()
+    public async Task Prefers_the_official_name_and_lists_the_others()
     {
         var (client, _) = Create(Bundle);
 
-        var lopez = (await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "lopez")))[0];
+        var lopez = (await SearchByDate(client))[0];
 
         Assert.Equal("Maria Elena Lopez", lopez.Name);
+        Assert.Equal(new[] { "Mari Lopez (usual)" }, lopez.OtherNames.ToArray());
     }
 
     [Fact]
@@ -43,9 +54,10 @@ public class PatientSearchTests
     {
         var (client, _) = Create(Bundle);
 
-        var smith = (await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "smith")))[1];
+        var smith = (await SearchByDate(client))[1];
 
         Assert.Equal("John Q. Smith", smith.Name);
+        Assert.Empty(smith.OtherNames);
     }
 
     [Fact]
@@ -54,11 +66,8 @@ public class PatientSearchTests
         var (before, _) = Create(Bundle, time: new FixedTime(2026, 6, 14));
         var (onDay, _) = Create(Bundle, time: new FixedTime(2026, 6, 15));
 
-        var ageBefore = (await before.SearchPatientsAsync(new PatientSearchCriteria(Name: "lopez")))[0].Age;
-        var ageOnDay = (await onDay.SearchPatientsAsync(new PatientSearchCriteria(Name: "lopez")))[0].Age;
-
-        Assert.Equal(45, ageBefore);
-        Assert.Equal(46, ageOnDay);
+        Assert.Equal(45, (await SearchByDate(before))[0].Age);
+        Assert.Equal(46, (await SearchByDate(onDay))[0].Age);
     }
 
     [Fact]
@@ -66,7 +75,7 @@ public class PatientSearchTests
     {
         var (client, _) = Create(Bundle);
 
-        var smith = (await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "smith")))[1];
+        var smith = (await SearchByDate(client))[1];
 
         Assert.Null(smith.BirthDate);
         Assert.Null(smith.Age);
@@ -77,7 +86,7 @@ public class PatientSearchTests
     {
         var (client, _) = Create(Bundle);
 
-        var okafor = (await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "okafor")))[2];
+        var okafor = (await SearchByDate(client))[2];
 
         Assert.True(okafor.Deceased);
         Assert.Null(okafor.Age);
@@ -89,7 +98,7 @@ public class PatientSearchTests
     {
         var (client, _) = Create(Bundle);
 
-        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "x"));
+        var result = await SearchByDate(client);
 
         Assert.Equal("Dallas", result[0].City);
         Assert.Null(result[1].City);
@@ -97,16 +106,17 @@ public class PatientSearchTests
     }
 
     [Fact]
-    public async Task Sends_an_escaped_query_and_asks_for_fhir_json()
+    public async Task A_birth_date_search_sends_only_the_date_and_asks_for_fhir_json()
     {
         var (client, handler) = Create(Bundle);
 
-        await client.SearchPatientsAsync(new PatientSearchCriteria("maria lopez", new DateOnly(1980, 6, 15), 5));
+        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(BirthDate: AnyDate, MaxResults: 5));
 
         Assert.Equal(
-            "https://example.org/fhir/Patient?name=maria%20lopez&birthdate=1980-06-15&_count=5",
+            "https://example.org/fhir/Patient?birthdate=1980-06-15&_count=5",
             handler.LastRequest!.RequestUri!.AbsoluteUri);
         Assert.Contains(handler.LastRequest.Headers.Accept, h => h.MediaType == "application/fhir+json");
+        Assert.Equal(NameMatchMode.None, result.MatchMode);
     }
 
     [Fact]
@@ -114,19 +124,15 @@ public class PatientSearchTests
     {
         var (client, _) = Create(Bundle);
 
-        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "x", MaxResults: 2));
-
-        Assert.Equal(2, result.Count);
+        Assert.Equal(2, (await SearchByDate(client, max: 2)).Count);
     }
 
     [Fact]
     public async Task An_empty_search_returns_an_empty_list()
     {
-        var (client, _) = Create("""{ "resourceType": "Bundle", "type": "searchset", "total": 0 }""");
+        var (client, _) = Create(Fixtures.EmptyBundle);
 
-        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(Name: "nobody"));
-
-        Assert.Empty(result);
+        Assert.Empty(await SearchByDate(client));
     }
 
     [Fact]
@@ -135,6 +141,7 @@ public class PatientSearchTests
         var (client, handler) = Create(Bundle);
 
         await Assert.ThrowsAsync<ArgumentException>(() => client.SearchPatientsAsync(new PatientSearchCriteria()));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchPatientsAsync(new PatientSearchCriteria(Name: " - . ")));
         Assert.Null(handler.LastRequest);
     }
 
