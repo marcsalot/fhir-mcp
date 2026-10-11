@@ -148,14 +148,14 @@ npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net10.0/FhirM
 
 | Tool | Input | Expected |
 | --- | --- | --- |
-The main example patient is **Reyna Ziemann** (`76d2fa2d-66a6-4823-8dab-52cd70822844`): 7 active conditions including hypertension and prediabetes, 5 active medications, 6 allergies, 25 lab tests, and an A1c trend from 2014 to 2020.
+The main example patient is **Reyna Ziemann** (`76d2fa2d-66a6-4823-8dab-52cd70822844`): 7 active conditions including hypertension and prediabetes, 5 active medications, 10 allergies, 25 lab tests, and an A1c trend from 2014 to 2020.
 
 | Tool | Input | Expected |
 | --- | --- | --- |
 | search_patients | name: `reyna ziemann` | 1 patient, Reyna Ziemann |
 | search_patients | name: `Melony Hammes` | Melony Williamson, maiden name Hammes |
 | search_patients | name: `o'keefe` | Mathilda and Clarine O'Keefe |
-| get_patient_summary | Reyna's id | 7 conditions, 5 medications, 6 allergies, latest vitals, last visit 2020-05-27 |
+| get_patient_summary | Reyna's id | 7 conditions, 5 medications, 10 allergies, latest vitals, last visit 2020-05-27 |
 | get_medications | Reyna's id, status: `active` | Hydrochlorothiazide, inhalers, ferrous sulfate, diphenhydramine |
 | get_observations | Reyna's id, text: `a1c` | 5 results, 2014 to 2020, with a note that words were matched |
 | get_observations | Reyna's id, category: `laboratory`, latestOnly: on | One result per test (25), including the lipid panel |
