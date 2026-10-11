@@ -27,14 +27,31 @@ This project addresses both: name and lab search are done on our side, with tran
 
 ## How it works
 
+```mermaid
+flowchart LR
+    client["Claude Desktop<br/>or another MCP client"]
+    fhir[("FHIR R4 server<br/>SMART sandbox or HAPI")]
+    audit[("Audit log<br/>hash-chained JSONL")]
+
+    subgraph server["fhir-mcp (this project)"]
+        policy["Policy filters<br/>tool allowlist,<br/>audit every call"]
+        tools["7 read-only tools"]
+        core["Core library<br/>name and test matching,<br/>compact summaries"]
+        privacy["Privacy output<br/>full or de-identified"]
+    end
+
+    client -- "tool call (MCP)" --> policy
+    policy --> tools
+    tools --> core
+    core <-- "GET only<br/>117 KB back" --> fhir
+    core --> privacy
+    privacy -- "2.2 KB summary" --> client
+    policy -.-> audit
 ```
-Claude  -->  MCP server (this project)  -->  FHIR R4 server
-                    |
-                    +-- matches names the way a person types them
-                    +-- flattens Bundles into small summaries
-                    +-- caps results and says when more exist
-                    +-- turns FHIR errors (OperationOutcome) into plain messages
-```
+
+1. Claude turns a question into a tool call. **Policy filters** refuse tools that are not enabled and write an audit record for every call.
+2. The **core library** asks the FHIR server narrow, read-only questions, matches names and test names the way a person types them, and flattens the large FHIR responses into small summaries.
+3. **Privacy output** returns the summary as is, or de-identified, before it reaches the model.
 
 FHIR responses are large, which wastes the model's context and makes answers worse. Most of the work in this project is in shaping requests and responses, not in calling the API. Measured against the SMART Health IT sandbox for one synthetic patient:
 
