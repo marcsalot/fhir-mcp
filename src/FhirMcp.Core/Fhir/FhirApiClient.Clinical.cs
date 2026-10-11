@@ -314,12 +314,22 @@ public sealed partial class FhirApiClient
     /// Ids go into the URL path and query, so only well-formed FHIR ids are accepted. This keeps
     /// a model (or a prompt-injected value) from steering the request to another resource or server.
     /// </summary>
-    private static void ValidatePatientId(string? patientId)
+    /// <remarks>
+    /// When the session is limited to one patient, any other id is refused here, before a request
+    /// is sent. The FHIR server should enforce the same limit; checking here as well means this
+    /// client does not depend on it (the SMART sandbox, for one, does not).
+    /// </remarks>
+    private void ValidatePatientId(string? patientId)
     {
         if (!FhirJson.IsValidId(patientId))
         {
             throw new ArgumentException(
                 "patientId must be a FHIR id (letters, digits, '-' and '.', up to 64 characters). Use an id returned by a patient search.");
+        }
+
+        if (LockedPatientId is { } locked && !string.Equals(patientId, locked, StringComparison.Ordinal))
+        {
+            throw new PatientAccessDeniedException(patientId!, locked);
         }
     }
 

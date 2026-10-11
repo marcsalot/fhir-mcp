@@ -23,7 +23,7 @@ This project addresses both: name and lab search are done on our side, with tran
 | MCP server with 7 read-only tools | Done |
 | Patient summary, medications, conditions, encounters, observations, allergies | Done |
 | Privacy and audit: tamper-evident audit log, de-identified mode, tool allowlist | Done |
-| SMART on FHIR authentication | Stretch goal |
+| SMART on FHIR sign-in: PKCE, token refresh, read-only scopes, patient limit | Done |
 
 ## How it works
 
@@ -32,6 +32,8 @@ flowchart LR
     client["Claude Desktop<br/>or another MCP client"]
     fhir[("FHIR R4 server<br/>SMART sandbox or HAPI")]
     audit[("Audit log<br/>hash-chained JSONL")]
+    authz[("SMART authorization<br/>server")]
+    login["login command<br/>browser sign-in, PKCE"]
 
     subgraph server["fhir-mcp (this project)"]
         policy["Policy filters<br/>tool allowlist,<br/>audit every call"]
@@ -43,15 +45,18 @@ flowchart LR
     client -- "tool call (MCP)" --> policy
     policy --> tools
     tools --> core
-    core <-- "GET only<br/>117 KB back" --> fhir
+    core <-- "GET only, Bearer token<br/>117 KB back" --> fhir
     core --> privacy
     privacy -- "2.2 KB summary" --> client
     policy -.-> audit
+    login -. "once" .-> authz
+    core -. "refresh token" .-> authz
 ```
 
 1. Claude turns a question into a tool call. **Policy filters** refuse tools that are not enabled and write an audit record for every call.
 2. The **core library** asks the FHIR server narrow, read-only questions, matches names and test names the way a person types them, and flattens the large FHIR responses into small summaries.
 3. **Privacy output** returns the summary as is, or de-identified, before it reaches the model.
+4. With **sign-in** turned on, every FHIR request carries the signed-in user's token, renewed in the background. Sign-in itself happens once, from a terminal.
 
 FHIR responses are large, which wastes the model's context and makes answers worse. Most of the work in this project is in shaping requests and responses, not in calling the API. Measured against the SMART Health IT sandbox for one synthetic patient:
 
@@ -107,7 +112,7 @@ Three controls answer the first questions a security or compliance team asks abo
 
 | Setting | Values | What it does |
 | --- | --- | --- |
-| `FHIR_MCP_AUDIT_LOG` | a file path, or `off` (default `~/.fhir-mcp/audit.jsonl`) | Writes one JSON line per tool call: time, tool, outcome, duration, arguments, patient ids accessed, item count. Names and birth dates typed into a search are recorded as `[redacted]`. Each line holds the SHA-256 hash of the line before it, so edits are detectable. |
+| `FHIR_MCP_AUDIT_LOG` | a file path, or `off` (default `~/.fhir-mcp/audit.jsonl`) | Writes one JSON line per tool call: time, tool, outcome, duration, arguments, patient ids accessed, item count, and the signed-in user when sign-in is on. Names and birth dates typed into a search are recorded as `[redacted]`. Each line holds the SHA-256 hash of the line before it, so edits are detectable. |
 | `FHIR_MCP_PRIVACY` | `full` (default) or `deidentified` | De-identified mode follows the HIPAA Safe Harbor approach before anything reaches the model: patient names and cities removed, dates reduced to the year, ages over 89 shown as "90 or older". |
 | `FHIR_MCP_TOOLS` | comma-separated tool names (default: all) | Tools not listed are hidden from the model and refused if called; refusals are audited. |
 
@@ -125,6 +130,50 @@ dotnet run --project src/FhirMcp.Server -- audit-verify path/to/audit.jsonl
 ```
 
 In de-identified mode, a search for Reyna Ziemann returns `"name": "[redacted]"`, no city, `"birthDate": "1974"`, and visit dates such as `"start": "2020"`. Invalid settings (an unknown mode or tool name) stop the server at startup instead of falling back to a looser policy.
+
+## Sign-in (SMART on FHIR)
+
+Real FHIR servers require authorization. With `FHIR_MCP_AUTH=smart`, the server signs in as a person using [SMART App Launch](https://hl7.org/fhir/smart-app-launch/), the healthcare profile of OAuth 2.0, and reads only what that person was granted. It is off by default, so the open test servers keep working without it. The reasoning and the limits are in [decision 0007](docs/decisions/0007-smart-on-fhir-sign-in.md).
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `FHIR_MCP_AUTH` | `none` (default) or `smart` | Sends the signed-in user's access token with every FHIR request. |
+| `FHIR_MCP_SMART_SCOPE` | default `openid fhirUser offline_access user/*.read` | What to ask for at sign-in. Only read scopes are accepted; anything that allows writing stops the server at startup. |
+| `FHIR_MCP_SMART_CLIENT_ID` | default `fhir-mcp` | The client id sent to the authorization server. |
+| `FHIR_MCP_TOKEN_STORE` | `keychain` (default on macOS) or `file` | Keychain: tokens in `~/.fhir-mcp/tokens.enc`, encrypted with AES-256-GCM under a key kept in the macOS Keychain. File: `~/.fhir-mcp/tokens.json`, readable only by you. |
+
+**How it works.** The MCP server runs in the background with no terminal, so you sign in once from a terminal:
+
+1. `login` reads the server's `.well-known/smart-configuration` and opens your browser to its sign-in page.
+2. You sign in, choose a patient if asked, and approve. The browser hands the code back to the command on `http://127.0.0.1:<random port>/callback`.
+3. The command trades the code for tokens using PKCE (S256), so an intercepted code is useless, and saves them.
+4. The MCP server adds the access token to each request and renews it with the refresh token shortly before it expires, or once if the server rejects it. A sign-in made while it is running is picked up without a restart.
+
+**Limited to one patient.** Ask for patient scopes and the sign-in page has you choose a patient. The session is then limited to that patient: the server refuses requests about anyone else before sending them, searches return only that patient, and each refusal is audited as `denied`. The FHIR server should enforce this too; checking here as well means the limit holds even against a server that does not (the SMART sandbox, for one).
+
+**Try it on the SMART sandbox.** The SMART launcher simulates an EHR's sign-in in front of the same synthetic patients. The long segment in this URL is the launcher's encoded settings: a provider signing in on their own, with PKCE required.
+
+```bash
+export FHIR_BASE_URL=https://launch.smarthealthit.org/v/r4/sim/WzIsIiIsIiIsIk5PTkUiLDAsMCwwLCIiLCIiLCIiLCIiLCIiLCIiLCIiLDAsMiwiIl0/fhir/
+export FHIR_MCP_AUTH=smart
+export FHIR_MCP_SMART_SCOPE="openid fhirUser offline_access launch/patient patient/*.read"
+
+./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server login         # pick any practitioner, then Reyna Ziemann, then Approve
+./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server auth-status   # who, which patient, when it expires (never the token)
+./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server logout
+```
+
+The sandbox's sign-in page is a demonstration: any password is accepted. `login` prints:
+
+```
+Signed in.
+  User:          Practitioner/52919099-6a7a-442c-b0d5-2b02c0dd4b74
+  Scope granted: openid fhirUser offline_access launch/patient patient/*.read
+  Patient:       limited to 76d2fa2d-66a6-4823-8dab-52cd70822844
+  Access token:  expires 2026-10-11 15:52; renewed automatically
+```
+
+Leave out `FHIR_MCP_SMART_SCOPE` to use the default `user/*.read` scope, which reads any patient the practitioner may see. For Claude Desktop, add the same three settings to the server's `env` and run `login` with the same `FHIR_BASE_URL`, since tokens are saved per server.
 
 ## Getting started
 
@@ -234,8 +283,8 @@ Questions to try in Claude: "Find Reyna Ziemann and summarize her health." "Do h
 ## Project layout
 
 ```
-src/FhirMcp.Core      FHIR client, name matching, mapping, privacy and audit (no dependencies)
-src/FhirMcp.Server    MCP server over stdio, policy filters, plus "search" and "audit-verify" commands
+src/FhirMcp.Core      FHIR client, name matching, mapping, privacy and audit, SMART sign-in (no dependencies)
+src/FhirMcp.Server    MCP server over stdio, policy filters, plus search, audit-verify, login, logout and auth-status commands
 tests/FhirMcp.Tests   xUnit tests with synthetic FHIR fixtures
 docs/decisions        Architecture decision records: why the code is shaped this way
 ```
@@ -247,7 +296,7 @@ The main decisions, with the options considered and their costs, are written up 
 - **No dependencies in the core library.** The FHIR client uses `HttpClient` and `System.Text.Json` and reads only the fields it needs, which keeps the output shaping explicit and easy to test.
 - **Read-only, bounded queries.** Every search requires real criteria and caps its results (50 at most), so a tool call can never page through a whole server.
 - **Honest data.** Partial birth dates (`1955`) are not turned into exact ages, deceased patients get no current age, and looser matches are labeled as such.
-- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 117 tests cover mapping, name and test matching, request shape, limits, errors, the JSON each tool returns, de-identification, and the audit log's hash chain.
+- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 155 tests cover mapping, name and test matching, request shape, limits, errors, the JSON each tool returns, de-identification, the audit log's hash chain, and sign-in (PKCE, discovery, token exchange and refresh, retry after 401, token storage, the patient limit) against a fake authorization server.
 
 ## Security notes
 
@@ -255,11 +304,11 @@ The main decisions, with the options considered and their costs, are written up 
 - Patient ids are checked against the FHIR id format before they go into a URL, so a malformed or injected value (`../Patient?_count=1000`) is rejected without a request.
 - Paging only follows `next` links that point back at the configured server, so a response cannot steer the client to another host.
 - Every tool call is audited, including refusals and failures, in a tamper-evident log (see Privacy and audit).
-- Synthetic data only. The privacy controls here are a starting point, not a compliance program: do not point this at a server holding real patient data without authentication (SMART on FHIR), protected storage for the audit log, and a review of free-text fields before relying on de-identified mode.
+- SMART sign-in (optional) uses PKCE and a checked `state`, accepts only read scopes, keeps tokens encrypted at rest on macOS, and never prints them. See [decision 0007](docs/decisions/0007-smart-on-fhir-sign-in.md) for what it does not cover, such as revoking tokens at the server.
+- Synthetic data only. The privacy controls here are a starting point, not a compliance program: do not point this at a server holding real patient data without sign-in turned on, protected storage for the audit log, and a review of free-text fields before relying on de-identified mode.
 - Error messages returned to the model contain the server's diagnostic text, never stack traces or raw payloads. Logs go to stderr so they never mix with the MCP protocol on stdout.
 
 ## Roadmap
 
-- SMART on FHIR (OAuth 2.0) authentication
-- Remote HTTP deployment on Azure Container Apps
+- Remote HTTP deployment on Azure Container Apps, with MCP's own authorization flow in place of the terminal sign-in
 - An MCP prompt that assembles a visit summary from several tools

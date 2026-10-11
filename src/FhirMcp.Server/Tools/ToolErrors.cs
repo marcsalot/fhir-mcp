@@ -1,4 +1,5 @@
 using System.Globalization;
+using FhirMcp.Core.Auth;
 using FhirMcp.Core.Fhir;
 using ModelContextProtocol;
 
@@ -17,11 +18,15 @@ internal static class ToolErrors
         {
             return await action();
         }
-        catch (Exception ex) when (ex is ArgumentException or FhirRequestException)
+        catch (Exception ex) when (IsExpected(ex))
         {
             throw new McpException(ex.Message, ex);
         }
     }
+
+    /// <summary>Failures whose message is written for the model: bad input, server errors, sign-in and access problems.</summary>
+    public static bool IsExpected(Exception ex) =>
+        ex is ArgumentException or FhirRequestException or SmartAuthException or PatientAccessDeniedException;
 
     public static DateOnly? ParseDate(string? value, string parameter)
     {

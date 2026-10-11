@@ -10,13 +10,14 @@ A read-only MCP server in C# (.NET 10) that lets Claude answer questions about p
 
 ## Status
 
-The code is complete and tested: 7 tools, a privacy and audit layer, 117 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. It is published at github.com/marcsalot/fhir-mcp and connected to Claude Desktop on the owner's Mac. Remaining work is the demo video (see What's next).
+The code is complete and tested: 7 tools, a privacy and audit layer, optional SMART on FHIR sign-in, 155 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. It is published at github.com/marcsalot/fhir-mcp and connected to Claude Desktop on the owner's Mac. Remaining work is the demo video (see What's next).
 
 ## Layout
 
 - `src/FhirMcp.Core`: FHIR client, name and test-name matching, mappers to compact records. No package dependencies (HttpClient and System.Text.Json only). Must not reference MCP.
 - `src/FhirMcp.Core/Privacy`: `PrivacyPolicy` (env var settings), `Deidentifier` (Safe Harbor rules on response JSON), `AuditLog` (hash-chained JSONL).
-- `src/FhirMcp.Server`: MCP host over stdio (ModelContextProtocol 2.2.0) plus `search` and `audit-verify` commands. `PolicyFilters` enforces the allowlist and writes audit records around every tool call; `ToolOutput` applies the privacy mode to every response. Tools live in `Tools/`; every tool returns JSON text built by `ToolSerializer` (camelCase, nulls omitted, non-ASCII left readable).
+- `src/FhirMcp.Core/Auth`: `SmartSettings` (env vars, read-only scope check), `SmartAuthClient` (discovery, PKCE, code exchange, refresh), `SmartTokens`, `SmartSession` (current tokens, renewal, patient limit) and `BearerTokenHandler`, token stores (`FileTokenStore`; `KeychainTokenStore` = AES-GCM file with its key in the macOS Keychain via `/usr/bin/security`). `Fhir/AccessScope.cs` holds `IAccessScope` and `PatientAccessDeniedException`.
+- `src/FhirMcp.Server`: MCP host over stdio (ModelContextProtocol 2.2.0) plus `search`, `audit-verify`, `login`, `logout` and `auth-status` commands (`AuthCommands.cs`). `PolicyFilters` enforces the allowlist and writes audit records around every tool call; `ToolOutput` applies the privacy mode to every response. Tools live in `Tools/`; every tool returns JSON text built by `ToolSerializer` (camelCase, nulls omitted, non-ASCII left readable).
 - `tests/FhirMcp.Tests`: xUnit, no network. `FakeHandler` answers by URL and records requests; `FixedTime` pins the clock.
 
 ## Tools (all read-only)
@@ -40,6 +41,7 @@ The code is complete and tested: 7 tools, a privacy and audit layer, 117 passing
 - **Tools return JSON text, not typed objects.** With `UseStructuredContent`, the 2.2.0 SDK's schema generator leaked response properties (such as `note`) into tool input schemas, which made MCP Inspector reject calls. Tools now return strings from `ToolSerializer`, and `SerializationTests` pins the output shape. The `search` command parses and indents that text for display.
 - **Errors reach the model.** Expected failures are rethrown as `McpException` (see `Tools/ToolErrors.cs`), since the SDK hides other exception messages.
 - **Privacy and audit live in the request pipeline, not in tools.** A new tool is covered automatically as long as it serializes through `ToolOutput` and is added to `PolicyFilters.KnownTools`' type list. See `docs/decisions/0006`.
+- **SMART sign-in is a terminal command; the server only uses and renews tokens.** The stdio server has no terminal or good moment to open a browser, so `login` does the browser flow (PKCE S256 required, loopback redirect on a random port, `state` checked) and saves tokens; the server's `BearerTokenHandler` refreshes 60 seconds before expiry and retries once after a 401. Only read scopes are accepted. When every granted resource scope is `patient/` and a patient was chosen, `FhirApiClient` refuses other patient ids before sending (audited as `denied`) and adds `_id` to patient searches. Audit records carry `user` (the ID token's fhirUser, not signature-checked; used for labels only). See `docs/decisions/0007`.
 - **Decision records:** `docs/decisions/` explains the major choices. Add a new record for any significant change rather than editing an accepted one.
 - **Security:** patient ids are validated against the FHIR id pattern before going into a URL; paging only follows `next` links on the configured server; stdout carries the protocol, so all logs go to stderr.
 
@@ -50,6 +52,7 @@ The code is complete and tested: 7 tools, a privacy and audit layer, 117 passing
 - **Main demo patient (SMART): Reyna Ziemann `76d2fa2d-66a6-4823-8dab-52cd70822844`.** 52, hypertension, prediabetes, obesity, chronic sinusitis, allergic rhinitis, history of cardiac arrest; 5 active medications (hydrochlorothiazide, ferrous sulfate, fluticasone and albuterol inhalers, diphenhydramine); 10 allergies; 25 lab tests; A1c 2014 to 2020 (peak 6.37% in 2016, 5.96% in 2020); 23 visits, last 2020-05-27.
 - Other SMART patients: Mathilda O'Keefe `c7792da2-a72f-4c0a-9dd8-05c5809008f1` (asthma, eczema, epinephrine auto-injector; apostrophe cases); Ima Reinger `6579753c-cb57-4962-a417-a0478b1115aa` (migraine, cardiac arrest history); Jill Tillman `f341c771-5aff-4858-9406-9d45e8a56246` (B12 injection, six allergies); Adolph Smith `d67a0cff-8f7e-46f7-bb99-577a6623e59a` (full-name search example, no active meds); Melony Williamson (maiden name Hammes).
 - On HAPI: Fatima Al-Sayed (hyphen cases); patient `ce1b4ef9-474f-45b8-a174-01b9f8e9d614` has a referenced Medication. HAPI is publicly writable and cleared from time to time, so these may disappear; if they do, search for new examples rather than assuming a bug. SMART data is stable.
+- SMART sign-in against the SMART launcher (`https://launch.smarthealthit.org/v/r4/sim/<settings>/fhir/`): the interactive flow (practitioner login, patient picker, approval) in a browser, PKCE code exchange, refresh, refresh-and-retry after a rejected token, the patient limit and its `denied` audit record, and the default `user/*.read` scope (finds any patient). The README's demo URL encodes provider standalone launch with PKCE required. The launcher accepts requests with no token (it rejects only invalid ones) and does not enforce scopes, so the client-side patient limit is the only enforcement there.
 - Synthetic data runs to about 2021; ages are computed from today, so visits look a few years old.
 
 ## How to run
@@ -58,7 +61,7 @@ Requires the .NET 10 SDK (on Apple Silicon Macs, the Arm64 installer).
 
 ```bash
 dotnet build
-dotnet test                       # expect 117 passing
+dotnet test                       # expect 155 passing
 dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
 FHIR_BASE_URL=https://hapi.fhir.org/baseR4/ dotnet run --project src/FhirMcp.Server -- search --name sayed
 npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
@@ -70,10 +73,11 @@ For Claude Desktop (Settings > Developer > Edit Config), point `command` at the 
 
 ## What's next
 
-1. Done: Mac setup (.NET 10), GitHub (CI green, topics, pinned), Claude Desktop connected and verified with Reyna Ziemann, privacy and audit layer, decision records.
+1. Done: Mac setup (.NET 10), GitHub (CI green, topics, pinned), Claude Desktop connected and verified with Reyna Ziemann, privacy and audit layer, decision records, SMART on FHIR sign-in (0007).
 2. Record a short demo video of one question being answered in Claude Desktop and add it to the README.
 3. Try de-identified mode in Claude Desktop (add `"FHIR_MCP_PRIVACY": "deidentified"` to the server's env) and confirm answers still make sense with year-only dates.
-4. Stretch: SMART on FHIR (OAuth 2.0) authorization, remote HTTP hosting on Azure Container Apps, an MCP prompt that assembles a visit summary. Write a decision record for each.
+4. Verify SMART sign-in on the Mac: the Keychain token store has only been tested with a fake `security` tool (the container is Linux). Run `login`, then `auth-status`, and confirm `security find-generic-password -s fhir-mcp -a token-encryption-key` finds the key. Then try it in Claude Desktop.
+5. Stretch: remote HTTP hosting on Azure Container Apps (with MCP's own authorization replacing the terminal sign-in), an MCP prompt that assembles a visit summary. Write a decision record for each.
 
 ## Conventions
 

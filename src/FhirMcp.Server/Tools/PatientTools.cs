@@ -57,9 +57,9 @@ public sealed class PatientTools
                 new PatientSearchCriteria(name, parsedBirthDate, maxResults, contains),
                 cancellationToken);
 
-            return _output.Serialize(PatientSearchResponse.From(result));
+            return _output.Serialize(PatientSearchResponse.From(result, _fhir.LockedPatientId));
         }
-        catch (Exception ex) when (ex is ArgumentException or FhirRequestException)
+        catch (Exception ex) when (ToolErrors.IsExpected(ex))
         {
             throw new McpException(ex.Message, ex);
         }
@@ -73,7 +73,8 @@ public sealed record PatientSearchResponse(
     string? Note,
     IReadOnlyList<PatientSummary> Patients)
 {
-    public static PatientSearchResponse From(PatientSearchResult result)
+    /// <param name="lockedPatientId">Set when the sign-in limits the session to one patient.</param>
+    public static PatientSearchResponse From(PatientSearchResult result, string? lockedPatientId = null)
     {
         var matchedBy = result.MatchMode switch
         {
@@ -93,6 +94,10 @@ public sealed record PatientSearchResponse(
         else if (result.FellBackToContains)
         {
             notes.Add("No name started with the words given, so these match the words anywhere in a name. Check that they are the patient you mean.");
+        }
+        if (lockedPatientId is not null)
+        {
+            notes.Add($"This session is limited to the patient selected at sign-in (id {lockedPatientId}), so only that patient can be found.");
         }
         if (result.MoreAvailable)
         {

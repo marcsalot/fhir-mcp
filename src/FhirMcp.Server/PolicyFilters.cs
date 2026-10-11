@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
+using FhirMcp.Core.Fhir;
 using FhirMcp.Core.Privacy;
 using FhirMcp.Server.Tools;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,9 +28,28 @@ internal static class PolicyFilters
             .Order()
             .ToList();
 
-    public static IMcpServerBuilder WithPolicy(this IMcpServerBuilder builder, PrivacyPolicy policy, AuditLog? audit) =>
+    /// <param name="currentUser">Who is signed in to the FHIR server, for audit records; null without SMART sign-in.</param>
+    public static IMcpServerBuilder WithPolicy(
+        this IMcpServerBuilder builder, PrivacyPolicy policy, AuditLog? audit, Func<string?>? currentUser = null) =>
         builder.WithRequestFilters(filters =>
         {
+            // A refusal because the session is limited to another patient counts as "denied", like a
+            // disabled tool, so audit queries for refused access find both.
+            static string OutcomeOf(string? error) =>
+                error?.Contains(PatientAccessDeniedException.MessagePrefix, StringComparison.Ordinal) == true ? "denied" : "error";
+
+            string? User()
+            {
+                try
+                {
+                    return currentUser?.Invoke();
+                }
+                catch (Exception)
+                {
+                    return null; // Never let reading the user break a call or its audit record.
+                }
+            }
+
             filters.AddListToolsFilter(next => async (context, cancellationToken) =>
             {
                 var result = await next(context, cancellationToken);
@@ -51,7 +71,7 @@ internal static class PolicyFilters
                 if (!policy.IsToolEnabled(tool))
                 {
                     var message = $"The tool \"{tool}\" is disabled by this server's policy ({PrivacyPolicy.ToolsVariable}).";
-                    audit?.Write(tool, "denied", clock.Elapsed, arguments, null, policy.Mode, client, message);
+                    audit?.Write(tool, "denied", clock.Elapsed, arguments, null, policy.Mode, client, message, User());
                     return new CallToolResult
                     {
                         IsError = true,
@@ -64,13 +84,14 @@ internal static class PolicyFilters
                     var result = await next(context, cancellationToken);
                     var text = result.Content.OfType<TextContentBlock>().FirstOrDefault()?.Text;
                     var failed = result.IsError == true;
-                    audit?.Write(tool, failed ? "error" : "ok", clock.Elapsed, arguments,
-                        failed ? null : text, policy.Mode, client, failed ? text : null);
+                    var outcome = failed ? OutcomeOf(text) : "ok";
+                    audit?.Write(tool, outcome, clock.Elapsed, arguments,
+                        failed ? null : text, policy.Mode, client, failed ? text : null, User());
                     return result;
                 }
                 catch (Exception ex)
                 {
-                    audit?.Write(tool, "error", clock.Elapsed, arguments, null, policy.Mode, client, ex.Message);
+                    audit?.Write(tool, OutcomeOf(ex.Message), clock.Elapsed, arguments, null, policy.Mode, client, ex.Message, User());
                     throw;
                 }
             });

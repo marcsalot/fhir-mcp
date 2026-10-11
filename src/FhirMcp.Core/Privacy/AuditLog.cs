@@ -12,6 +12,7 @@ namespace FhirMcp.Core.Privacy;
 /// <param name="Arguments">The call's arguments, with names and birth dates replaced by "[redacted]".</param>
 /// <param name="PatientIds">Every patient id the call asked about or returned: who was accessed.</param>
 /// <param name="ItemCount">How many items the response held, when it reports a count.</param>
+/// <param name="User">Who was signed in to the FHIR server (such as "Practitioner/123"), when SMART sign-in is on.</param>
 /// <param name="Previous">SHA-256 of the previous line, so an edited or deleted line breaks the chain.</param>
 public sealed record AuditRecord(
     DateTimeOffset Time,
@@ -23,6 +24,7 @@ public sealed record AuditRecord(
     int? ItemCount,
     string Privacy,
     string? Client,
+    string? User,
     string? Error,
     string Previous);
 
@@ -82,7 +84,8 @@ public sealed class AuditLog
         string? responseJson,
         PrivacyMode privacy,
         string? client,
-        string? error)
+        string? error,
+        string? user = null)
     {
         lock (_gate)
         {
@@ -96,6 +99,7 @@ public sealed class AuditLog
                 ItemCount: CountIn(responseJson),
                 Privacy: privacy == PrivacyMode.Deidentified ? "deidentified" : "full",
                 Client: client,
+                User: user,
                 Error: error,
                 Previous: _previousHash);
 

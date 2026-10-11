@@ -19,8 +19,10 @@ public sealed partial class FhirApiClient
 
     private readonly HttpClient _http;
     private readonly TimeProvider _time;
+    private readonly IAccessScope? _access;
 
-    public FhirApiClient(HttpClient http, TimeProvider? time = null)
+    /// <param name="access">Optional limit on which patients may be read (see <see cref="IAccessScope"/>).</param>
+    public FhirApiClient(HttpClient http, TimeProvider? time = null, IAccessScope? access = null)
     {
         _http = http ?? throw new ArgumentNullException(nameof(http));
         if (_http.BaseAddress is null)
@@ -28,7 +30,11 @@ public sealed partial class FhirApiClient
             throw new ArgumentException("HttpClient.BaseAddress must be set to the FHIR server's base URL.", nameof(http));
         }
         _time = time ?? TimeProvider.System;
+        _access = access;
     }
+
+    /// <summary>The only patient this client may read, or null when there is no such limit.</summary>
+    public string? LockedPatientId => _access?.LockedPatientId;
 
     /// <summary>How many candidates to fetch when extra name words are checked on our side.</summary>
     internal const int CandidatePoolSize = 100;
@@ -95,13 +101,20 @@ public sealed partial class FhirApiClient
         {
             query.Add("birthdate=" + birthDate.ToString("yyyy-MM-dd"));
         }
+        if (LockedPatientId is { } lockedId)
+        {
+            // Ask only about the allowed patient, so others are never fetched at all.
+            query.Add("_id=" + Uri.EscapeDataString(lockedId));
+        }
         query.Add("_count=" + fetch);
 
         using var bundle = await GetJsonAsync("Patient?" + string.Join('&', query), cancellationToken);
         var today = DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime);
         var contains = mode == NameMatchMode.Contains;
 
+        var locked = LockedPatientId;
         var patients = ReadEntries(bundle.RootElement, "Patient")
+            .Where(p => locked is null || FhirJson.GetString(p, "id") == locked)
             .Where(p => tokens.Count == 0 || NameMatcher.Matches(tokens, NameMatcher.PatientTokens(p), contains))
             .Select(p => PatientMapper.Map(p, today))
             .Take(criteria.MaxResults)
