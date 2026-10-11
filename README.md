@@ -129,7 +129,7 @@ dotnet run --project src/FhirMcp.Server -- audit-verify            # default log
 dotnet run --project src/FhirMcp.Server -- audit-verify path/to/audit.jsonl
 ```
 
-In de-identified mode, a search for Reyna Ziemann returns `"name": "[redacted]"`, no city, `"birthDate": "1974"`, and visit dates such as `"start": "2020"`. Invalid settings (an unknown mode or tool name) stop the server at startup instead of falling back to a looser policy.
+In de-identified mode, a search for Reyna Ziemann returns `"name": "[redacted]"`, no city, `"birthDate": "1974"`, and visit dates such as `"start": "2020"`. De-identified mode controls what the server sends to the model, not what you type: ask "tell me about Reyna Ziemann's medications" and the model already knows the name from your question, while the server's answer still carries no name and year-only dates. To see the difference, ask without a name (with sign-in limited to one patient, "summarize the patient I'm signed in for" works). Invalid settings (an unknown mode or tool name) stop the server at startup instead of falling back to a looser policy.
 
 ## Sign-in (SMART on FHIR)
 
@@ -171,7 +171,20 @@ Signed in.
   Access token:  expires 2026-10-11 15:52; renewed automatically
 ```
 
-Set `FHIR_MCP_SMART_SCOPE="openid fhirUser offline_access user/*.read"` before `login` to sign in without choosing a patient and read any patient the practitioner may see. For Claude Desktop, set `"FHIR_MCP_SERVER": "smart-login"` in the server's `env` and run `login` with the same setting, since tokens are saved per server.
+Set `FHIR_MCP_SMART_SCOPE="openid fhirUser offline_access user/*.read"` before `login` to sign in without choosing a patient and read any patient the practitioner may see. To switch patients, run `login` again; the new sign-in replaces the old one, and a running server picks it up without a restart.
+
+**In Claude Desktop.** Run `login` in a terminal with `FHIR_MCP_SERVER=smart-login` first, since tokens are saved per server, then set the same value in the server's `env`:
+
+```json
+"env": {
+  "FHIR_MCP_SERVER": "smart-login",
+  "FHIR_MCP_PRIVACY": "full"
+}
+```
+
+Remove any `FHIR_BASE_URL` line when you add `FHIR_MCP_SERVER`: with both set the server will not start, and Claude Desktop shows it as disconnected (the reason is in `~/Library/Logs/Claude/mcp-server-fhir.log`). Fully quit (Cmd+Q) and reopen. Questions about the chosen patient are answered; a question about anyone else is refused and audited as `denied`.
+
+Verified on macOS (Apple Silicon): browser sign-in, the Keychain key and encrypted token file, the one-patient limit in the terminal and in Claude Desktop, and de-identified mode on top of sign-in.
 
 ## Getting started
 
