@@ -15,7 +15,7 @@ public sealed class PatientTools
 
     public PatientTools(FhirApiClient fhir) => _fhir = fhir;
 
-    [McpServerTool(Name = "search_patients", Title = "Search patients", ReadOnly = true, Idempotent = true, OpenWorld = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "search_patients", Title = "Search patients", ReadOnly = true, Idempotent = true, OpenWorld = true)]
     [Description(
         "Find patients by name and/or birth date on the connected FHIR server (synthetic test data). " +
         "Returns compact summaries with each patient's id, which the other tools take as input. " +
@@ -24,7 +24,7 @@ public sealed class PatientTools
         "ignoring case, accents, hyphens and apostrophes. So \"smith\" also finds \"Smitham\", but \"ham\" does not. " +
         "If nothing matches, the search is retried automatically matching words anywhere in a name, and the result says so. " +
         "When a patient matched on a name other than their current one, it appears in otherNames.")]
-    public async Task<PatientSearchResponse> SearchPatients(
+    public async Task<string> SearchPatients(
         [Description("Any part of the patient's name, in any order. Optional if birthDate is given.")]
         string? name = null,
         [Description("Exact birth date, formatted yyyy-MM-dd. Optional if name is given.")]
@@ -51,12 +51,10 @@ public sealed class PatientTools
                 new PatientSearchCriteria(name, parsedBirthDate, maxResults, contains),
                 cancellationToken);
 
-            return PatientSearchResponse.From(result);
+            return ToolSerializer.Serialize(PatientSearchResponse.From(result));
         }
         catch (Exception ex) when (ex is ArgumentException or FhirRequestException)
         {
-            // McpException messages reach the model, so it can fix its input or tell the user
-            // what went wrong. Other exceptions stay hidden behind the SDK's generic message.
             throw new McpException(ex.Message, ex);
         }
     }

@@ -93,25 +93,43 @@ Use a different server by setting `FHIR_BASE_URL`, for example `https://hapi.fhi
 
 ### Connect it to Claude Desktop
 
-Build once, then add the server to `claude_desktop_config.json`:
+Build once, then in Claude Desktop open **Settings > Developer > Edit Config** and add the server, using the full path to the built program (run `pwd` in the project folder to get it):
 
 ```json
 {
   "mcpServers": {
     "fhir": {
-      "command": "dotnet",
-      "args": ["run", "--project", "/path/to/fhir-mcp/src/FhirMcp.Server", "--no-build"],
+      "command": "/Users/you/Projects/fhir-mcp/src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server",
       "env": { "FHIR_BASE_URL": "https://r4.smarthealthit.org/" }
     }
   }
 }
 ```
 
+Fully quit and reopen Claude Desktop. A full path is more reliable than `dotnet run`, because desktop apps on macOS do not always share the terminal's PATH.
+
 Or with Claude Code:
 
 ```bash
-claude mcp add fhir -- dotnet run --project /path/to/fhir-mcp/src/FhirMcp.Server --no-build
+claude mcp add fhir -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server
 ```
+
+### Test it by hand
+
+[MCP Inspector](https://github.com/modelcontextprotocol/inspector) gives you a web page to call each tool:
+
+```bash
+npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server
+```
+
+| Tool | Input | Expected |
+| --- | --- | --- |
+| search_patients | name: `adolph smith` | 1 patient |
+| search_patients | name: `Melony Hammes` | Melony Williamson, maiden name Hammes |
+| get_patient_summary | Adolph Smith's id | Active conditions, latest vitals, last visit |
+| get_observations | his id, text: `a1c` | A1c results with a note that words were matched |
+| get_observations | his id, category: `labs` | Error listing valid categories |
+| search_patients | birthDate: `1/10/1953` | Error asking for yyyy-MM-dd |
 
 ## Project layout
 

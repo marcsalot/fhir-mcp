@@ -39,7 +39,7 @@ public sealed record EncounterSummary(
 
 /// <summary>A lab result, vital sign or survey answer (FHIR Observation).</summary>
 /// <param name="Value">The result as a person would read it: "77.93 mg/dL", "Never smoker", "Systolic 106.4 mm[Hg]; Diastolic 79.69 mm[Hg]".</param>
-/// <param name="Interpretation">The lab's flag, such as High or Low, when recorded.</param>
+/// <param name="Interpretation">The lab flag, such as High or Low, when recorded.</param>
 /// <param name="LoincCode">The LOINC code, which identifies the test.</param>
 public sealed record ObservationSummary(
     string Name,
