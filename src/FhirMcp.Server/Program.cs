@@ -16,25 +16,28 @@ using Microsoft.Extensions.Logging;
 //   login [--scope "..."]             sign in with SMART on FHIR (opens the browser)
 //   logout                            remove the saved sign-in
 //   auth-status                       show who is signed in, without printing tokens
+//   servers                           list the named test servers
 //
-// FHIR_BASE_URL picks the server; it defaults to the SMART Health IT R4 sandbox,
+// FHIR_MCP_SERVER picks a test server by name (smart, hapi or smart-login), or
+// FHIR_BASE_URL sets any other server. The default is the SMART Health IT R4 sandbox,
 // which holds synthetic patients only. FHIR_MCP_PRIVACY, FHIR_MCP_AUDIT_LOG and
 // FHIR_MCP_TOOLS set the privacy policy (see PrivacyPolicy); FHIR_MCP_AUTH and the
 // FHIR_MCP_SMART_* variables set sign-in (see SmartSettings and the README).
 
-const string DefaultBaseUrl = "https://r4.smarthealthit.org/";
-
-var baseUrl = Environment.GetEnvironmentVariable("FHIR_BASE_URL") ?? DefaultBaseUrl;
-if (!baseUrl.EndsWith('/')) baseUrl += "/";
-
 var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
+FhirServerSettings server;
 PrivacyPolicy policy;
 SmartSettings smart;
 try
 {
+    server = FhirServerSettings.FromEnvironment(Environment.GetEnvironmentVariable);
     policy = PrivacyPolicy.FromEnvironment(Environment.GetEnvironmentVariable, home, PolicyFilters.KnownTools);
-    smart = SmartSettings.FromEnvironment(Environment.GetEnvironmentVariable, home, OperatingSystem.IsMacOS());
+
+    // A preset that expects sign-in (smart-login) turns it on and suggests its scope,
+    // unless FHIR_MCP_AUTH or FHIR_MCP_SMART_SCOPE say otherwise.
+    smart = SmartSettings.FromEnvironment(Environment.GetEnvironmentVariable, home, OperatingSystem.IsMacOS(),
+        defaultEnabled: server.Preset?.SignIn ?? false, defaultScope: server.Preset?.DefaultScope);
 }
 catch (ArgumentException ex)
 {
@@ -42,6 +45,8 @@ catch (ArgumentException ex)
     Console.Error.WriteLine($"fhir-mcp: {ex.Message}");
     return 2;
 }
+
+var baseUrl = server.BaseUrl;
 
 // With SMART sign-in on, every FHIR request carries the signed-in user's access token.
 var session = smart.Enabled
@@ -54,6 +59,8 @@ var session = smart.Enabled
 
 switch (args.FirstOrDefault())
 {
+    case "servers":
+        return ListServers(server);
     case "search":
         return await RunSearchCommandAsync(args, baseUrl, policy, session);
     case "audit-verify":
@@ -96,7 +103,7 @@ builder.Services
 
 var app = builder.Build();
 var log = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("fhir-mcp");
-log.LogInformation("Starting fhir-mcp against {BaseUrl} with {Policy}; {Auth}", baseUrl, policy.Describe(), smart.Describe());
+log.LogInformation("Starting fhir-mcp against {Server} with {Policy}; {Auth}", server.Describe(), policy.Describe(), smart.Describe());
 if (session is not null)
 {
     var tokens = session.Current;
@@ -181,4 +188,22 @@ static int RunAuditVerify(string path)
 
     Console.Error.WriteLine($"Audit log FAILED verification: {problem} ({path})");
     return 1;
+}
+
+static int ListServers(FhirServerSettings current)
+{
+    Console.WriteLine($"Pick one with {FhirServerSettings.ServerVariable}=<name>, or set {FhirServerSettings.BaseUrlVariable} for any other server.");
+    Console.WriteLine();
+    foreach (var preset in FhirServerSettings.Presets)
+    {
+        var marker = current.Preset?.Name == preset.Name ? "*" : " ";
+        Console.WriteLine($"{marker} {preset.Name,-12} {preset.Description}");
+        Console.WriteLine($"  {"",-12} {preset.BaseUrl}");
+    }
+    if (current.Preset is null)
+    {
+        Console.WriteLine();
+        Console.WriteLine($"* Current: {current.BaseUrl} (from {FhirServerSettings.BaseUrlVariable})");
+    }
+    return 0;
 }

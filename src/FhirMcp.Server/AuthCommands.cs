@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using FhirMcp.Core.Auth;
+using FhirMcp.Core.Fhir;
 
 namespace FhirMcp.Server;
 
@@ -21,7 +22,13 @@ internal static class AuthCommands
 
     /// <summary>What to tell the user when the server needs a sign-in.</summary>
     public static string SignInHint(string baseUrl) =>
-        $"In a terminal, run: FHIR_BASE_URL={baseUrl} \"{Environment.ProcessPath}\" login";
+        $"In a terminal, run: {ServerSetting(baseUrl)} \"{Environment.ProcessPath}\" login";
+
+    /// <summary>The shortest setting that selects this server: the preset name when there is one.</summary>
+    private static string ServerSetting(string baseUrl) =>
+        FhirServerSettings.Presets.FirstOrDefault(p => p.BaseUrl == baseUrl) is { } preset
+            ? $"{FhirServerSettings.ServerVariable}={preset.Name}"
+            : $"{FhirServerSettings.BaseUrlVariable}={baseUrl}";
 
     public static async Task<int> LoginAsync(string[] args, string baseUrl, SmartSettings settings)
     {

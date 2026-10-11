@@ -47,12 +47,16 @@ public sealed record SmartSettings(bool Enabled, string ClientId, string Scope, 
     /// Reads the settings. Invalid values, including any scope that would allow writing,
     /// stop the server at startup with a clear message.
     /// </summary>
-    public static SmartSettings FromEnvironment(Func<string, string?> getVariable, string homeDirectory, bool isMacOS)
+    /// <param name="defaultEnabled">Sign-in when FHIR_MCP_AUTH is unset; true for a server preset that expects it.</param>
+    /// <param name="defaultScope">The scope when FHIR_MCP_SMART_SCOPE is unset; a server preset may suggest one.</param>
+    public static SmartSettings FromEnvironment(
+        Func<string, string?> getVariable, string homeDirectory, bool isMacOS, bool defaultEnabled = false, string? defaultScope = null)
     {
         var authText = getVariable(AuthVariable)?.Trim().ToLowerInvariant();
         var enabled = authText switch
         {
-            null or "" or "none" => false,
+            null or "" => defaultEnabled,
+            "none" => false,
             "smart" => true,
             _ => throw new ArgumentException($"{AuthVariable} must be \"none\" or \"smart\". Got \"{getVariable(AuthVariable)}\"."),
         };
@@ -61,7 +65,7 @@ public sealed record SmartSettings(bool Enabled, string ClientId, string Scope, 
         if (string.IsNullOrEmpty(clientId)) clientId = DefaultClientId;
 
         var scope = getVariable(ScopeVariable)?.Trim();
-        if (string.IsNullOrEmpty(scope)) scope = DefaultScope;
+        if (string.IsNullOrEmpty(scope)) scope = defaultScope ?? DefaultScope;
         ValidateReadOnlyScope(scope);
 
         var storeText = getVariable(StoreVariable)?.Trim().ToLowerInvariant();
