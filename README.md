@@ -132,11 +132,31 @@ Build once, then in Claude Desktop open **Settings > Developer > Edit Config** a
 
 Fully quit and reopen Claude Desktop. A full path is more reliable than `dotnet run`, because desktop apps on macOS do not always share the terminal's PATH.
 
-Or with Claude Code:
+### Connect it to Claude Code
+
+Build once, then register the server. Use `-e` to set the FHIR server URL:
 
 ```bash
-claude mcp add fhir -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
+# SMART Health IT sandbox (default, curated synthetic patients)
+claude mcp add fhir -e FHIR_BASE_URL=https://r4.smarthealthit.org/ -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
+
+# HAPI public test server (edge cases: hyphenated names, medication references)
+claude mcp add fhir -e FHIR_BASE_URL=https://hapi.fhir.org/baseR4/ -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
 ```
+
+Replace `/path/to/fhir-mcp` with the absolute path to this repo. To check what is registered:
+
+```bash
+claude mcp list
+```
+
+To remove and re-add with a different server:
+
+```bash
+claude mcp remove fhir
+```
+
+Once registered, ask Claude Code questions like: "Find Reyna Ziemann and summarize her health." or "Is her blood sugar trend improving?"
 
 ### Test it by hand
 
