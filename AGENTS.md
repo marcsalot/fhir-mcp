@@ -77,7 +77,7 @@ For Claude Desktop (Settings > Developer > Edit Config), point `command` at the 
 1. Done: Mac setup (.NET 10), GitHub (CI green, topics, pinned), Claude Desktop connected and verified with Reyna Ziemann, privacy and audit layer, decision records, SMART on FHIR sign-in (0007).
 2. Record a short demo video of one question being answered in Claude Desktop and add it to the README.
 3. Try de-identified mode in Claude Desktop (add `"FHIR_MCP_PRIVACY": "deidentified"` to the server's env) and confirm answers still make sense with year-only dates.
-4. Verify SMART sign-in on the Mac: the Keychain token store has only been tested with a fake `security` tool (the container is Linux). Run `login`, then `auth-status`, and confirm `security find-generic-password -s fhir-mcp -a token-encryption-key` finds the key. Then try it in Claude Desktop.
+4. Done: SMART sign-in verified on the Mac (October 11, 2026): login through the browser, the Keychain key created (`security find-generic-password -s fhir-mcp -a token-encryption-key`), tokens saved encrypted in `~/.fhir-mcp/tokens.enc`, and the one-patient limit applied to search. Next: try `smart-login` in Claude Desktop.
 5. Stretch: remote HTTP hosting on Azure Container Apps (with MCP's own authorization replacing the terminal sign-in), an MCP prompt that assembles a visit summary. Write a decision record for each.
 
 ## Conventions
