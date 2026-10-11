@@ -6,9 +6,7 @@ An MCP server, written in C# on .NET 10, that lets Claude and other MCP clients 
 
 ## Why this exists
 
-I work in healthcare technology, leading engineering teams that build on FHIR. This is a hands-on exploration of a question that comes up in that work: how well can an AI model answer clinical questions directly from a patient record, and where does the obvious approach break down?
-
-Two things break down quickly.
+Connecting an AI model to patient records over FHIR is a natural idea. Making it work well is harder than it looks, for two reasons.
 
 **FHIR search is more literal than it looks.** The standard `name=` parameter matches only the beginning of one stored name value, so searching for "Reyna Ziemann" returns nothing -- the phrase has to match one value from the start. "Sayed" misses "Al-Sayed" because "Al-" comes first. "a1c" misses "Hemoglobin A1c/Hemoglobin.total in Blood" because the test name does not start with "a1c". These are not bugs; they are how the standard works. But they matter a lot when a model generates search terms from natural language.
 
