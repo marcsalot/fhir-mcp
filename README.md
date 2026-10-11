@@ -4,6 +4,18 @@ An MCP server, written in C# on .NET 10, that lets Claude and other MCP clients 
 
 > **Synthetic data only.** This project points at public FHIR test servers seeded with synthetic patients. It is read-only and is not connected to any real patient data.
 
+## Why this exists
+
+I work in healthcare technology, leading engineering teams that build on FHIR. This is a hands-on exploration of a question that comes up in that work: how well can an AI model answer clinical questions directly from a patient record, and where does the obvious approach break down?
+
+Two things break down quickly.
+
+**FHIR search is more literal than it looks.** The standard `name=` parameter matches only the beginning of one stored name value, so searching for "Reyna Ziemann" returns nothing -- the phrase has to match one value from the start. "Sayed" misses "Al-Sayed" because "Al-" comes first. "a1c" misses "Hemoglobin A1c/Hemoglobin.total in Blood" because the test name does not start with "a1c". These are not bugs; they are how the standard works. But they matter a lot when a model generates search terms from natural language.
+
+**Raw FHIR responses are large.** A patient summary takes six parallel searches and returns several hundred kilobytes of JSON, most of it schema boilerplate. Sending that to a model wastes context and produces worse answers.
+
+This project addresses both: name and lab search are done on our side, with transparent notes about how results were found, and each tool returns a compact summary shaped for a model rather than for a client that needs the full resource. The MCP protocol connects it to Claude and other AI clients.
+
 ## Status
 
 | Piece | State |
