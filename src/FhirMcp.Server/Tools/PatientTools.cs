@@ -12,8 +12,13 @@ namespace FhirMcp.Server.Tools;
 public sealed class PatientTools
 {
     private readonly FhirApiClient _fhir;
+    private readonly ToolOutput _output;
 
-    public PatientTools(FhirApiClient fhir) => _fhir = fhir;
+    public PatientTools(FhirApiClient fhir, ToolOutput output)
+    {
+        _fhir = fhir;
+        _output = output;
+    }
 
     [McpServerTool(Name = "search_patients", Title = "Search patients", ReadOnly = true, Idempotent = true, OpenWorld = true)]
     [Description(
@@ -52,7 +57,7 @@ public sealed class PatientTools
                 new PatientSearchCriteria(name, parsedBirthDate, maxResults, contains),
                 cancellationToken);
 
-            return ToolSerializer.Serialize(PatientSearchResponse.From(result));
+            return _output.Serialize(PatientSearchResponse.From(result));
         }
         catch (Exception ex) when (ex is ArgumentException or FhirRequestException)
         {

@@ -1,28 +1,49 @@
 using System.Globalization;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using FhirMcp.Core.Fhir;
+using FhirMcp.Core.Privacy;
+using FhirMcp.Server;
 using FhirMcp.Server.Tools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-// Runs as an MCP server over stdio by default. "search" runs a one-off command-line
-// search instead, which is handy for checking the FHIR connection:
+// Runs as an MCP server over stdio by default. Two commands are handy for checks:
 //
 //   dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
+//   dotnet run --project src/FhirMcp.Server -- audit-verify [path]
 //
 // FHIR_BASE_URL picks the server; it defaults to the SMART Health IT R4 sandbox,
-// which holds synthetic patients only.
+// which holds synthetic patients only. FHIR_MCP_PRIVACY, FHIR_MCP_AUDIT_LOG and
+// FHIR_MCP_TOOLS set the privacy policy (see PrivacyPolicy and the README).
 
 const string DefaultBaseUrl = "https://r4.smarthealthit.org/";
 
 var baseUrl = Environment.GetEnvironmentVariable("FHIR_BASE_URL") ?? DefaultBaseUrl;
 if (!baseUrl.EndsWith('/')) baseUrl += "/";
 
+var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+PrivacyPolicy policy;
+try
+{
+    policy = PrivacyPolicy.FromEnvironment(Environment.GetEnvironmentVariable, home, PolicyFilters.KnownTools);
+}
+catch (ArgumentException ex)
+{
+    // Refuse to start rather than run with a looser policy than the one intended.
+    Console.Error.WriteLine($"fhir-mcp: {ex.Message}");
+    return 2;
+}
+
 if (args.Length > 0 && args[0] == "search")
 {
-    return await RunSearchCommandAsync(args, baseUrl);
+    return await RunSearchCommandAsync(args, baseUrl, policy);
+}
+
+if (args.Length > 0 && args[0] == "audit-verify")
+{
+    return RunAuditVerify(args.Length > 1 ? args[1] : policy.AuditLogPath ?? PrivacyPolicy.DefaultAuditPath(home));
 }
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -36,16 +57,25 @@ builder.Services.AddHttpClient<FhirApiClient>(http =>
     http.Timeout = TimeSpan.FromSeconds(30);
 });
 
+var audit = policy.AuditLogPath is null ? null : new AuditLog(policy.AuditLogPath);
+builder.Services.AddSingleton(policy);
+builder.Services.AddSingleton(new ToolOutput(policy));
+
 builder.Services
-    .AddMcpServer(o => o.ServerInfo = new() { Name = "fhir-mcp", Version = "0.1.0" })
+    .AddMcpServer(o => o.ServerInfo = new() { Name = "fhir-mcp", Version = "0.2.0" })
     .WithStdioServerTransport()
     .WithTools<PatientTools>()
-    .WithTools<ClinicalTools>();
+    .WithTools<ClinicalTools>()
+    .WithPolicy(policy, audit);
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("fhir-mcp")
+    .LogInformation("Starting fhir-mcp against {BaseUrl} with {Policy}", baseUrl, policy.Describe());
+
+await app.RunAsync();
 return 0;
 
-static async Task<int> RunSearchCommandAsync(string[] args, string baseUrl)
+static async Task<int> RunSearchCommandAsync(string[] args, string baseUrl, PrivacyPolicy policy)
 {
     string? name = null;
     string? birthDate = null;
@@ -69,11 +99,11 @@ static async Task<int> RunSearchCommandAsync(string[] args, string baseUrl)
     }
 
     using var http = new HttpClient { BaseAddress = new Uri(baseUrl), Timeout = TimeSpan.FromSeconds(30) };
-    var tools = new PatientTools(new FhirApiClient(http));
+    var tools = new PatientTools(new FhirApiClient(http), new ToolOutput(policy));
 
     try
     {
-        // The tool returns compact JSON text (see ToolSerializer); indent it for reading.
+        // The tool returns compact JSON text (see ToolOutput); indent it for reading.
         var response = await tools.SearchPatients(name, birthDate, contains, max);
         using var doc = JsonDocument.Parse(response);
         Console.WriteLine(JsonSerializer.Serialize(doc.RootElement, new JsonSerializerOptions
@@ -88,4 +118,24 @@ static async Task<int> RunSearchCommandAsync(string[] args, string baseUrl)
         Console.Error.WriteLine(ex.Message);
         return 1;
     }
+}
+
+static int RunAuditVerify(string path)
+{
+    if (!File.Exists(path))
+    {
+        Console.Error.WriteLine($"No audit log at {path}.");
+        return 1;
+    }
+
+    var problem = AuditLog.Verify(path);
+    var lines = File.ReadLines(path).Count(l => l.Length > 0);
+    if (problem is null)
+    {
+        Console.WriteLine($"Audit log intact: {lines} records, hash chain verified ({path}).");
+        return 0;
+    }
+
+    Console.Error.WriteLine($"Audit log FAILED verification: {problem} ({path})");
+    return 1;
 }

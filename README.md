@@ -22,6 +22,7 @@ This project addresses both: name and lab search are done on our side, with tran
 | Name matching (full names, hyphens, accents, maiden names, fallback) | Done |
 | MCP server with 7 read-only tools | Done |
 | Patient summary, medications, conditions, encounters, observations, allergies | Done |
+| Privacy and audit: tamper-evident audit log, de-identified mode, tool allowlist | Done |
 | SMART on FHIR authentication | Stretch goal |
 
 ## How it works
@@ -83,6 +84,31 @@ Tools are read-only and annotated as such. Errors (a bad date, an unknown patien
 - **References resolved in one request.** A medication order may point at a separate Medication resource instead of naming the drug. The tool asks the server to include those (`_include`) and returns the drug's name.
 - **Honest notes.** Each list says when more items exist than were returned, and an empty allergy list says "none on file", not "no allergies".
 
+## Privacy and audit
+
+Three controls answer the first questions a security or compliance team asks about connecting a model to patient data. They are enforced once in the MCP request pipeline, so every tool is covered. The reasoning and the limits are in [decision 0006](docs/decisions/0006-privacy-and-audit-layer.md).
+
+| Setting | Values | What it does |
+| --- | --- | --- |
+| `FHIR_MCP_AUDIT_LOG` | a file path, or `off` (default `~/.fhir-mcp/audit.jsonl`) | Writes one JSON line per tool call: time, tool, outcome, duration, arguments, patient ids accessed, item count. Names and birth dates typed into a search are recorded as `[redacted]`. Each line holds the SHA-256 hash of the line before it, so edits are detectable. |
+| `FHIR_MCP_PRIVACY` | `full` (default) or `deidentified` | De-identified mode follows the HIPAA Safe Harbor approach before anything reaches the model: patient names and cities removed, dates reduced to the year, ages over 89 shown as "90 or older". |
+| `FHIR_MCP_TOOLS` | comma-separated tool names (default: all) | Tools not listed are hidden from the model and refused if called; refusals are audited. |
+
+A real audit record from a test run (the client name is the test script):
+
+```json
+{"time":"2026-10-11T18:39:22.7563254+00:00","tool":"get_conditions","outcome":"ok","durationMs":190,"arguments":{"patientId":"76d2fa2d-66a6-4823-8dab-52cd70822844","status":"active"},"patientIds":["76d2fa2d-66a6-4823-8dab-52cd70822844"],"itemCount":7,"privacy":"full","client":"policy-check","previous":"1adb3cbb47e4537c60d0217c6ea57b1ef9f07376cd2940767f1620fe66c76cc5"}
+```
+
+Check that a log has not been edited:
+
+```bash
+dotnet run --project src/FhirMcp.Server -- audit-verify            # default log
+dotnet run --project src/FhirMcp.Server -- audit-verify path/to/audit.jsonl
+```
+
+In de-identified mode, a search for Reyna Ziemann returns `"name": "[redacted]"`, no city, `"birthDate": "1974"`, and visit dates such as `"start": "2020"`. Invalid settings (an unknown mode or tool name) stop the server at startup instead of falling back to a looser policy.
+
 ## Getting started
 
 Requires the .NET 10 SDK.
@@ -124,7 +150,10 @@ Build once, then in Claude Desktop open **Settings > Developer > Edit Config** a
   "mcpServers": {
     "fhir": {
       "command": "/Users/you/Projects/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server",
-      "env": { "FHIR_BASE_URL": "https://r4.smarthealthit.org/" }
+      "env": {
+        "FHIR_BASE_URL": "https://r4.smarthealthit.org/",
+        "FHIR_MCP_PRIVACY": "full"
+      }
     }
   }
 }
@@ -188,24 +217,28 @@ Questions to try in Claude: "Find Reyna Ziemann and summarize her health." "Do h
 ## Project layout
 
 ```
-src/FhirMcp.Core      FHIR client, name matching, mapping to compact summaries (no dependencies)
-src/FhirMcp.Server    MCP server over stdio, plus a "search" command for quick checks
+src/FhirMcp.Core      FHIR client, name matching, mapping, privacy and audit (no dependencies)
+src/FhirMcp.Server    MCP server over stdio, policy filters, plus "search" and "audit-verify" commands
 tests/FhirMcp.Tests   xUnit tests with synthetic FHIR fixtures
+docs/decisions        Architecture decision records: why the code is shaped this way
 ```
 
 ## Design choices
 
+The main decisions, with the options considered and their costs, are written up as [architecture decision records](docs/decisions/README.md). In short:
+
 - **No dependencies in the core library.** The FHIR client uses `HttpClient` and `System.Text.Json` and reads only the fields it needs, which keeps the output shaping explicit and easy to test.
 - **Read-only, bounded queries.** Every search requires real criteria and caps its results (50 at most), so a tool call can never page through a whole server.
 - **Honest data.** Partial birth dates (`1955`) are not turned into exact ages, deceased patients get no current age, and looser matches are labeled as such.
-- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 96 tests cover mapping, name and test matching, request shape, limits, errors, and the JSON each tool returns.
+- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 117 tests cover mapping, name and test matching, request shape, limits, errors, the JSON each tool returns, de-identification, and the audit log's hash chain.
 
 ## Security notes
 
 - Read-only: the client only issues `GET` requests.
 - Patient ids are checked against the FHIR id format before they go into a URL, so a malformed or injected value (`../Patient?_count=1000`) is rejected without a request.
 - Paging only follows `next` links that point back at the configured server, so a response cannot steer the client to another host.
-- Synthetic data only; do not point this at a server holding real patient data without adding authentication, audit logging, and a review of what is sent to the model.
+- Every tool call is audited, including refusals and failures, in a tamper-evident log (see Privacy and audit).
+- Synthetic data only. The privacy controls here are a starting point, not a compliance program: do not point this at a server holding real patient data without authentication (SMART on FHIR), protected storage for the audit log, and a review of free-text fields before relying on de-identified mode.
 - Error messages returned to the model contain the server's diagnostic text, never stack traces or raw payloads. Logs go to stderr so they never mix with the MCP protocol on stdout.
 
 ## Roadmap

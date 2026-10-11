@@ -10,12 +10,13 @@ A read-only MCP server in C# (.NET 10) that lets Claude answer questions about p
 
 ## Status
 
-The code is complete and tested: 7 tools, 96 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. Remaining work is the Claude Desktop hookup, demo, and publishing (see What's next).
+The code is complete and tested: 7 tools, a privacy and audit layer, 117 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. It is published at github.com/marcsalot/fhir-mcp and connected to Claude Desktop on the owner's Mac. Remaining work is the demo video (see What's next).
 
 ## Layout
 
 - `src/FhirMcp.Core`: FHIR client, name and test-name matching, mappers to compact records. No package dependencies (HttpClient and System.Text.Json only). Must not reference MCP.
-- `src/FhirMcp.Server`: MCP host over stdio (ModelContextProtocol 2.2.0) plus a `search` command-line mode for quick checks. Tools live in `Tools/`; every tool returns JSON text built by `ToolSerializer` (camelCase, nulls omitted, non-ASCII left readable).
+- `src/FhirMcp.Core/Privacy`: `PrivacyPolicy` (env var settings), `Deidentifier` (Safe Harbor rules on response JSON), `AuditLog` (hash-chained JSONL).
+- `src/FhirMcp.Server`: MCP host over stdio (ModelContextProtocol 2.2.0) plus `search` and `audit-verify` commands. `PolicyFilters` enforces the allowlist and writes audit records around every tool call; `ToolOutput` applies the privacy mode to every response. Tools live in `Tools/`; every tool returns JSON text built by `ToolSerializer` (camelCase, nulls omitted, non-ASCII left readable).
 - `tests/FhirMcp.Tests`: xUnit, no network. `FakeHandler` answers by URL and records requests; `FixedTime` pins the clock.
 
 ## Tools (all read-only)
@@ -38,6 +39,8 @@ The code is complete and tested: 7 tools, 96 passing tests, every tool verified 
 - **Medication references** are resolved with `_include=MedicationRequest:medication` in the same request (verified on HAPI: returns "Nitroglycerin").
 - **Tools return JSON text, not typed objects.** With `UseStructuredContent`, the 2.2.0 SDK's schema generator leaked response properties (such as `note`) into tool input schemas, which made MCP Inspector reject calls. Tools now return strings from `ToolSerializer`, and `SerializationTests` pins the output shape. The `search` command parses and indents that text for display.
 - **Errors reach the model.** Expected failures are rethrown as `McpException` (see `Tools/ToolErrors.cs`), since the SDK hides other exception messages.
+- **Privacy and audit live in the request pipeline, not in tools.** A new tool is covered automatically as long as it serializes through `ToolOutput` and is added to `PolicyFilters.KnownTools`' type list. See `docs/decisions/0006`.
+- **Decision records:** `docs/decisions/` explains the major choices. Add a new record for any significant change rather than editing an accepted one.
 - **Security:** patient ids are validated against the FHIR id pattern before going into a URL; paging only follows `next` links on the configured server; stdout carries the protocol, so all logs go to stderr.
 
 ## Verified live (October 2026)
@@ -55,7 +58,7 @@ Requires the .NET 10 SDK (on Apple Silicon Macs, the Arm64 installer).
 
 ```bash
 dotnet build
-dotnet test                       # expect 96 passing
+dotnet test                       # expect 117 passing
 dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
 FHIR_BASE_URL=https://hapi.fhir.org/baseR4/ dotnet run --project src/FhirMcp.Server -- search --name sayed
 npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
@@ -67,12 +70,10 @@ For Claude Desktop (Settings > Developer > Edit Config), point `command` at the 
 
 ## What's next
 
-1. Done: set up on the Mac (.NET 10), build, tests passing, MCP Inspector verified.
-2. Run the full manual test table in the README with MCP Inspector, using Reyna Ziemann.
-3. Connect to Claude Desktop and ask real questions about Reyna Ziemann ("Summarize her health", "Do her medications line up with her conditions?", "Is her blood sugar getting better or worse?").
-4. Record a short demo GIF of one question being answered and add it to the README.
-5. Push to GitHub and pin the repo.
-6. Stretch: SMART on FHIR (OAuth 2.0), remote HTTP hosting on Azure Container Apps, an MCP prompt that assembles a visit summary.
+1. Done: Mac setup (.NET 10), GitHub (CI green, topics, pinned), Claude Desktop connected and verified with Reyna Ziemann, privacy and audit layer, decision records.
+2. Record a short demo video of one question being answered in Claude Desktop and add it to the README.
+3. Try de-identified mode in Claude Desktop (add `"FHIR_MCP_PRIVACY": "deidentified"` to the server's env) and confirm answers still make sense with year-only dates.
+4. Stretch: SMART on FHIR (OAuth 2.0) authorization, remote HTTP hosting on Azure Container Apps, an MCP prompt that assembles a visit summary. Write a decision record for each.
 
 ## Conventions
 

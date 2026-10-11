@@ -13,8 +13,13 @@ public sealed class ClinicalTools
     private const string MaxHelp = "Maximum items to return, 1 to 100. Defaults to 20.";
 
     private readonly FhirApiClient _fhir;
+    private readonly ToolOutput _output;
 
-    public ClinicalTools(FhirApiClient fhir) => _fhir = fhir;
+    public ClinicalTools(FhirApiClient fhir, ToolOutput output)
+    {
+        _fhir = fhir;
+        _output = output;
+    }
 
     [McpServerTool(Name = "get_patient_summary", Title = "Patient summary", ReadOnly = true, Idempotent = true, OpenWorld = true)]
     [Description(
@@ -24,7 +29,7 @@ public sealed class ClinicalTools
     public Task<string> GetPatientSummary(
         [Description(PatientIdHelp)] string patientId,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(
+        ToolErrors.Run(async () => _output.Serialize(
             await _fhir.GetPatientOverviewAsync(patientId, cancellationToken)));
 
     [McpServerTool(Name = "get_medications", Title = "Medications", ReadOnly = true, Idempotent = true, OpenWorld = true)]
@@ -36,7 +41,7 @@ public sealed class ClinicalTools
         [Description("\"active\" for current orders only, or \"all\" (the default) to include stopped and completed ones.")] string? status = null,
         [Description(MaxHelp)] int maxResults = 20,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(ListResponse.From(
+        ToolErrors.Run(async () => _output.Serialize(ListResponse.From(
             patientId,
             await _fhir.GetMedicationsAsync(patientId, ToolErrors.ActiveOnly(status), maxResults, cancellationToken),
             emptyNote: ToolErrors.ActiveOnly(status) ? "No active medication orders. Try status \"all\" for past orders." : "No medication orders on record.")));
@@ -50,7 +55,7 @@ public sealed class ClinicalTools
         [Description("\"active\" for current problems only, or \"all\" (the default) to include resolved ones.")] string? status = null,
         [Description(MaxHelp)] int maxResults = 20,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(ListResponse.From(
+        ToolErrors.Run(async () => _output.Serialize(ListResponse.From(
             patientId,
             await _fhir.GetConditionsAsync(patientId, ToolErrors.ActiveOnly(status), maxResults, cancellationToken),
             emptyNote: "No conditions on record.")));
@@ -64,7 +69,7 @@ public sealed class ClinicalTools
         [Description("Only visits on or after this date, formatted yyyy-MM-dd.")] string? since = null,
         [Description(MaxHelp)] int maxResults = 20,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(ListResponse.From(
+        ToolErrors.Run(async () => _output.Serialize(ListResponse.From(
             patientId,
             await _fhir.GetEncountersAsync(patientId, ToolErrors.ParseDate(since, nameof(since)), maxResults, cancellationToken),
             emptyNote: "No visits found for that period.")));
@@ -85,7 +90,7 @@ public sealed class ClinicalTools
         [Description("Keep only the most recent result of each test.")] bool latestOnly = false,
         [Description(MaxHelp)] int maxResults = 20,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(ListResponse.From(
+        ToolErrors.Run(async () => _output.Serialize(ListResponse.From(
             patientId,
             await _fhir.GetObservationsAsync(
                 new ObservationQuery(
@@ -104,7 +109,7 @@ public sealed class ClinicalTools
     public Task<string> GetAllergies(
         [Description(PatientIdHelp)] string patientId,
         CancellationToken cancellationToken = default) =>
-        ToolErrors.Run(async () => ToolSerializer.Serialize(ListResponse.From(
+        ToolErrors.Run(async () => _output.Serialize(ListResponse.From(
             patientId,
             await _fhir.GetAllergiesAsync(patientId, maxResults: 50, cancellationToken),
             emptyNote: "No allergies recorded. That means none are on file, not that the patient has none.")));
