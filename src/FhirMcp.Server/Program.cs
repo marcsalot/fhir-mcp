@@ -39,7 +39,8 @@ builder.Services.AddHttpClient<FhirApiClient>(http =>
 builder.Services
     .AddMcpServer(o => o.ServerInfo = new() { Name = "fhir-mcp", Version = "0.1.0" })
     .WithStdioServerTransport()
-    .WithTools<PatientTools>();
+    .WithTools<PatientTools>()
+    .WithTools<ClinicalTools>();
 
 await builder.Build().RunAsync();
 return 0;

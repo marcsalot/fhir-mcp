@@ -13,9 +13,9 @@ namespace FhirMcp.Core.Fhir;
 /// The <see cref="HttpClient"/> must have its BaseAddress set to the server's
 /// base URL, ending in a slash (for example https://r4.smarthealthit.org/).
 /// </summary>
-public sealed class FhirApiClient
+public sealed partial class FhirApiClient
 {
-    private const string FhirJson = "application/fhir+json";
+    private const string FhirJsonMediaType = "application/fhir+json";
 
     private readonly HttpClient _http;
     private readonly TimeProvider _time;
@@ -155,7 +155,7 @@ public sealed class FhirApiClient
     private async Task<JsonDocument> GetJsonAsync(string relativeUrl, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, relativeUrl);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(FhirJson));
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(FhirJsonMediaType));
 
         HttpResponseMessage response;
         try
