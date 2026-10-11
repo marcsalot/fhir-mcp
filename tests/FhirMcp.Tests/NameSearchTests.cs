@@ -86,15 +86,22 @@ public class NameSearchTests
         Assert.Equal(new[] { "p-arisso" }, await Ids(client, typed));
     }
 
+    // Not covered here: "obrien" or "okeefe" typed without the apostrophe. Our matching accepts
+    // them, but FHIR servers store "O'Brien" with its apostrophe and cannot match the anchor word,
+    // so no candidates come back in practice (verified live). Same for "AlSayed".
     [Theory]
     [InlineData("O'Brien")]
-    [InlineData("obrien")]
+    [InlineData("o'brien")]
+    [InlineData("Siobhan O'Brien")]
     [InlineData("Siobhan O Brien")]
     public async Task Apostrophes_are_ignored(string typed)
     {
         var (client, _) = Create();
 
-        Assert.Equal(new[] { "p-obrien" }, await Ids(client, typed));
+        var result = await client.SearchPatientsAsync(new PatientSearchCriteria(Name: typed));
+
+        Assert.Equal(new[] { "p-obrien" }, result.Patients.Select(p => p.Id).ToArray());
+        Assert.False(result.FellBackToContains);
     }
 
     [Fact]

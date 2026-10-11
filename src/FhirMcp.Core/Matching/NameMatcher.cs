@@ -21,6 +21,9 @@ public static class NameMatcher
     // Spaces, tabs, the ASCII hyphen, and Unicode hyphen (U+2010), non-breaking hyphen (U+2011) and en dash (U+2013).
     private static readonly char[] Separators = { ' ', '\t', '-', '\u2010', '\u2011', '\u2013' };
 
+    // Recorded names are also split at apostrophes (ASCII and U+2019), so "O'Brien" yields o, brien and obrien.
+    private static readonly char[] NameSeparators = Separators.Concat(new[] { '\'', '\u2019' }).ToArray();
+
     /// <summary>Splits a search into normalized words. "Al-Sayed  Fatima" becomes [al, sayed, fatima].</summary>
     public static IReadOnlyList<string> QueryTokens(string query) =>
         query.Split(Separators, StringSplitOptions.RemoveEmptyEntries)
@@ -30,7 +33,7 @@ public static class NameMatcher
 
     /// <summary>
     /// Every word in every name the patient has, normalized, plus each multi-word part
-    /// joined into one word. "Al-Sayed" gives al, sayed and alsayed.
+    /// joined into one word. "Al-Sayed" gives al, sayed and alsayed; "O'Brien" gives o, brien and obrien.
     /// </summary>
     public static HashSet<string> PatientTokens(JsonElement patient)
     {
@@ -44,7 +47,7 @@ public static class NameMatcher
         {
             foreach (var part in NameParts(name))
             {
-                var words = part.Split(Separators, StringSplitOptions.RemoveEmptyEntries)
+                var words = part.Split(NameSeparators, StringSplitOptions.RemoveEmptyEntries)
                     .Select(Normalize)
                     .Where(w => w.Length > 0)
                     .ToList();

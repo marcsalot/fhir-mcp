@@ -19,9 +19,10 @@ public sealed class PatientTools
     [Description(
         "Find patients by name and/or birth date on the connected FHIR server (synthetic test data). " +
         "Returns compact summaries with each patient's id, which the other tools take as input. " +
-        "Name matching: type any part of a name in any order (\"Adolph Smith\", \"smith\", \"Al-Sayed\", \"al sayed\"). " +
+        "Name matching: type any part of a name in any order (\"Reyna Ziemann\", \"ziemann\", \"Al-Sayed\", \"al sayed\"). " +
         "Each word must match the START of a word in one of the patient's names, including maiden and other names, " +
         "ignoring case, accents, hyphens and apostrophes. So \"smith\" also finds \"Smitham\", but \"ham\" does not. " +
+        "Type hyphens and apostrophes as stored (\"O'Keefe\", not \"okeefe\"); the server cannot match across them. " +
         "If nothing matches, the search is retried automatically matching words anywhere in a name, and the result says so. " +
         "When a patient matched on a name other than their current one, it appears in otherNames.")]
     public async Task<string> SearchPatients(
@@ -81,7 +82,7 @@ public sealed record PatientSearchResponse(
         if (result.Patients.Count == 0)
         {
             notes.Add(result.FellBackToContains
-                ? "No patients matched, even matching the words anywhere in a name. Try fewer words, a different spelling (multi-part names are stored with their hyphen, as in \"Al-Sayed\"), or a birth date."
+                ? "No patients matched, even matching the words anywhere in a name. Try fewer words, a different spelling (names are stored with their hyphens and apostrophes, as in \"Al-Sayed\" or \"O'Keefe\"), or a birth date."
                 : "No patients matched. Try fewer words, a different spelling, or a birth date.");
         }
         else if (result.FellBackToContains)

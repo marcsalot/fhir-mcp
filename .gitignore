@@ -483,5 +483,5 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
-# Private session notes — keep out of git
+# Private session notes, kept out of git
 NOTES.local.md

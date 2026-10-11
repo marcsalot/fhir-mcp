@@ -1,6 +1,6 @@
 # FHIR MCP Server
 
-An MCP server, written in C# on .NET 8, that lets Claude and other MCP clients answer questions about patient records over FHIR R4. Ask "What is Adolph Smith being treated for, and what were his latest labs?" and the server runs the FHIR searches, trims the verbose responses down to what matters, and hands back a compact answer.
+An MCP server, written in C# on .NET 10, that lets Claude and other MCP clients answer questions about patient records over FHIR R4. Ask "What is Reyna Ziemann being treated for, and do her medications line up with it?" and the server runs the FHIR searches, trims the verbose responses down to what matters, and hands back a compact answer.
 
 > **Synthetic data only.** This project points at public FHIR test servers seeded with synthetic patients. It is read-only and is not connected to any real patient data.
 
@@ -38,7 +38,7 @@ FHIR's default name search surprised me in testing against public servers:
 
 | Typed | FHIR server alone | This server |
 | --- | --- | --- |
-| `Adolph Smith` | 0 results (the phrase must match one name value) | Adolph Smith |
+| `Reyna Ziemann` | 0 results (the phrase must match one name value) | Reyna Ziemann |
 | `Sayed` (for Al-Sayed) | 0 results (only the start of "Al-Sayed" matches) | Fatima Al-Sayed, flagged as a looser match |
 | `fatima al sayed` | 0 results | Fatima Al-Sayed |
 | `Hammes` | Melony Williamson, with no hint why | Melony Williamson, showing "Melony Hammes (maiden)" |
@@ -50,7 +50,7 @@ How it works:
 3. If nothing matches, the search is retried with FHIR's `:contains` modifier, and the result says so.
 4. Each result lists the patient's other names, so it is clear why they matched.
 
-Known limit: a hyphenated name typed as one word (`AlSayed`) is not found, because the server stores the hyphen and offers no way to match across it. The tool's reply suggests the hyphenated spelling.
+Known limit: a name typed without its hyphen or apostrophe (`AlSayed`, `okeefe`) is not found, because the server stores "Al-Sayed" and "O'Keefe" and offers no way to match across those characters. The tool's description and its no-match note tell the model to use the stored spelling.
 
 ## Tools
 
@@ -75,7 +75,7 @@ Tools are read-only and annotated as such. Errors (a bad date, an unknown patien
 
 ## Getting started
 
-Requires the .NET 8 SDK.
+Requires the .NET 10 SDK.
 
 ```bash
 dotnet build
@@ -85,7 +85,7 @@ dotnet test
 Try a search from the command line (defaults to the SMART Health IT R4 sandbox):
 
 ```bash
-dotnet run --project src/FhirMcp.Server -- search --name "adolph smith"
+dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
 dotnet run --project src/FhirMcp.Server -- search --name ham --contains
 ```
 
@@ -99,7 +99,7 @@ Build once, then in Claude Desktop open **Settings > Developer > Edit Config** a
 {
   "mcpServers": {
     "fhir": {
-      "command": "/Users/you/Projects/fhir-mcp/src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server",
+      "command": "/Users/you/Projects/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server",
       "env": { "FHIR_BASE_URL": "https://r4.smarthealthit.org/" }
     }
   }
@@ -111,7 +111,7 @@ Fully quit and reopen Claude Desktop. A full path is more reliable than `dotnet 
 Or with Claude Code:
 
 ```bash
-claude mcp add fhir -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server
+claude mcp add fhir -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
 ```
 
 ### Test it by hand
@@ -119,17 +119,27 @@ claude mcp add fhir -- /path/to/fhir-mcp/src/FhirMcp.Server/bin/Debug/net8.0/Fhi
 [MCP Inspector](https://github.com/modelcontextprotocol/inspector) gives you a web page to call each tool:
 
 ```bash
-npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net8.0/FhirMcp.Server
+npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
 ```
 
 | Tool | Input | Expected |
 | --- | --- | --- |
-| search_patients | name: `adolph smith` | 1 patient |
+The main example patient is **Reyna Ziemann** (`76d2fa2d-66a6-4823-8dab-52cd70822844`): 7 active conditions including hypertension and prediabetes, 5 active medications, 6 allergies, 25 lab tests, and an A1c trend from 2014 to 2020.
+
+| Tool | Input | Expected |
+| --- | --- | --- |
+| search_patients | name: `reyna ziemann` | 1 patient, Reyna Ziemann |
 | search_patients | name: `Melony Hammes` | Melony Williamson, maiden name Hammes |
-| get_patient_summary | Adolph Smith's id | Active conditions, latest vitals, last visit |
-| get_observations | his id, text: `a1c` | A1c results with a note that words were matched |
-| get_observations | his id, category: `labs` | Error listing valid categories |
+| search_patients | name: `o'keefe` | Mathilda and Clarine O'Keefe |
+| get_patient_summary | Reyna's id | 7 conditions, 5 medications, 6 allergies, latest vitals, last visit 2020-05-27 |
+| get_medications | Reyna's id, status: `active` | Hydrochlorothiazide, inhalers, ferrous sulfate, diphenhydramine |
+| get_observations | Reyna's id, text: `a1c` | 5 results, 2014 to 2020, with a note that words were matched |
+| get_observations | Reyna's id, category: `laboratory`, latestOnly: on | One result per test (25), including the lipid panel |
+| get_observations | Reyna's id, category: `labs` | Error listing valid categories |
 | search_patients | birthDate: `1/10/1953` | Error asking for yyyy-MM-dd |
+| get_conditions | patientId: `../Patient` | Error saying the id is invalid |
+
+Questions to try in Claude: "Find Reyna Ziemann and summarize her health." "Do her medications line up with her conditions?" "Is her blood sugar getting better or worse?" "Anything in her allergies to watch for?"
 
 ## Project layout
 
@@ -144,7 +154,7 @@ tests/FhirMcp.Tests   xUnit tests with synthetic FHIR fixtures
 - **No dependencies in the core library.** The FHIR client uses `HttpClient` and `System.Text.Json` and reads only the fields it needs, which keeps the output shaping explicit and easy to test.
 - **Read-only, bounded queries.** Every search requires real criteria and caps its results (50 at most), so a tool call can never page through a whole server.
 - **Honest data.** Partial birth dates (`1955`) are not turned into exact ages, deceased patients get no current age, and looser matches are labeled as such.
-- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 80 tests cover mapping, name and test matching, request shape, limits, and errors.
+- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 96 tests cover mapping, name and test matching, request shape, limits, errors, and the JSON each tool returns.
 
 ## Security notes
 

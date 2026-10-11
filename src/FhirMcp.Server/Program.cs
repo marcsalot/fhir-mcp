@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 // Runs as an MCP server over stdio by default. "search" runs a one-off command-line
 // search instead, which is handy for checking the FHIR connection:
 //
-//   dotnet run --project src/FhirMcp.Server -- search --name "adolph smith"
+//   dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
 //
 // FHIR_BASE_URL picks the server; it defaults to the SMART Health IT R4 sandbox,
 // which holds synthetic patients only.
@@ -73,12 +73,12 @@ static async Task<int> RunSearchCommandAsync(string[] args, string baseUrl)
 
     try
     {
+        // The tool returns compact JSON text (see ToolSerializer); indent it for reading.
         var response = await tools.SearchPatients(name, birthDate, contains, max);
-        Console.WriteLine(JsonSerializer.Serialize(response, new JsonSerializerOptions
+        using var doc = JsonDocument.Parse(response);
+        Console.WriteLine(JsonSerializer.Serialize(doc.RootElement, new JsonSerializerOptions
         {
             WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         }));
         return 0;
