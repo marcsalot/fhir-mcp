@@ -6,7 +6,7 @@ This file is the handoff for any AI coding agent (Warp, Claude Code, others) wor
 
 ## What this is
 
-A read-only MCP server in C# (.NET 10) that lets Claude answer questions about patient records over FHIR R4. A portfolio project demonstrating FHIR integration and AI tooling. Public synthetic data only. Never add real patient data, credentials, or code from any employer.
+A read-only MCP server in C# (.NET 10) that lets Claude answer questions about patient records over FHIR R4. A side project exploring FHIR integration and AI tooling. Public synthetic data only. Never add real patient data, credentials, or code from any employer.
 
 ## Status
 
@@ -72,8 +72,7 @@ For Claude Desktop (Settings > Developer > Edit Config), point `command` at the 
 3. Connect to Claude Desktop and ask real questions about Reyna Ziemann ("Summarize her health", "Do her medications line up with her conditions?", "Is her blood sugar getting better or worse?").
 4. Record a short demo GIF of one question being answered and add it to the README.
 5. Push to GitHub and pin the repo.
-6. Write a short LinkedIn post about what was built and the FHIR search findings.
-7. Stretch: SMART on FHIR (OAuth 2.0), remote HTTP hosting on Azure Container Apps, an MCP prompt that assembles a visit summary.
+6. Stretch: SMART on FHIR (OAuth 2.0), remote HTTP hosting on Azure Container Apps, an MCP prompt that assembles a visit summary.
 
 ## Conventions
 
