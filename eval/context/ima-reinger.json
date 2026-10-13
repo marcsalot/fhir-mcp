@@ -1,0 +1,832 @@
+{
+  "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+  "source": "https://r4.smarthealthit.org/",
+  "capturedOn": "2026-10-13",
+  "tools": {
+    "get_patient_summary": {
+      "patient": {
+        "id": "6579753c-cb57-4962-a417-a0478b1115aa",
+        "name": "Ima Reinger",
+        "otherNames": [
+          "Ima Braun (maiden)"
+        ],
+        "gender": "female",
+        "birthDate": "1990-04-16",
+        "age": 36,
+        "city": "Boston",
+        "state": "Massachusetts",
+        "deceased": false
+      },
+      "activeConditions": [
+        {
+          "name": "Chronic intractable migraine without aura",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2016-11-12",
+          "snomedCode": "124171000119105"
+        },
+        {
+          "name": "History of cardiac arrest (situation)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1994-07-25",
+          "snomedCode": "429007001"
+        },
+        {
+          "name": "Cardiac Arrest",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1994-07-25",
+          "snomedCode": "410429000"
+        },
+        {
+          "name": "Seasonal allergic rhinitis",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1993-04-22",
+          "snomedCode": "367498001"
+        }
+      ],
+      "activeMedications": [
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "active",
+          "ordered": "2020-12-05",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "NDA020800 0.3 ML Epinephrine 1 MG/ML Auto-Injector",
+          "status": "active",
+          "ordered": "1991-04-27",
+          "dosage": "as needed",
+          "rxNormCode": "1870230"
+        },
+        {
+          "name": "Terfenadine 60 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1991-04-27",
+          "dosage": "as needed",
+          "rxNormCode": "141918"
+        }
+      ],
+      "allergies": [
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to grass pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Shellfish allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Dander (animal) allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "House dust mite allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        }
+      ],
+      "latestVitals": [
+        {
+          "name": "Blood Pressure",
+          "date": "2019-04-22",
+          "value": "Diastolic Blood Pressure: 78.23 mm[Hg]; Systolic Blood Pressure: 123.8 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2019-04-22",
+          "value": "169.9 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2019-04-22",
+          "value": "21.5 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2019-04-22",
+          "value": "62.07 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Oral temperature",
+          "date": "2019-04-12",
+          "value": "37.92 Cel",
+          "category": "vital-signs",
+          "loincCode": "8331-1"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2019-04-22",
+          "value": "3.997 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ],
+      "lastEncounter": {
+        "start": "2020-12-28",
+        "end": "2020-12-28",
+        "setting": "ambulatory",
+        "type": "Patient encounter procedure",
+        "reasons": [],
+        "status": "finished"
+      }
+    },
+    "get_medications status=all": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 14,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "active",
+          "ordered": "2020-12-05",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "Yaz 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2019-12-11",
+          "rxNormCode": "748856"
+        },
+        {
+          "name": "Natazia 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2018-12-16",
+          "rxNormCode": "978950"
+        },
+        {
+          "name": "Yaz 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2017-12-21",
+          "rxNormCode": "748856"
+        },
+        {
+          "name": "Nitrofurantoin 5 MG/ML Oral Suspension",
+          "status": "stopped",
+          "ordered": "2017-05-10",
+          "rxNormCode": "311989"
+        },
+        {
+          "name": "Phenazopyridine hydrochloride 100 MG Oral Tablet",
+          "status": "stopped",
+          "ordered": "2017-05-10",
+          "rxNormCode": "1094107"
+        },
+        {
+          "name": "Etonogestrel 68 MG Drug Implant",
+          "status": "stopped",
+          "ordered": "2016-12-26",
+          "rxNormCode": "389221"
+        },
+        {
+          "name": "Acetaminophen 325 MG / Oxycodone Hydrochloride 5 MG Oral Tablet",
+          "status": "stopped",
+          "ordered": "2016-11-12",
+          "rxNormCode": "1049221"
+        },
+        {
+          "name": "Mirena 52 MG Intrauterine System",
+          "status": "stopped",
+          "ordered": "2015-02-14",
+          "rxNormCode": "807283"
+        },
+        {
+          "name": "Seasonique 91 Day Pack",
+          "status": "stopped",
+          "ordered": "2014-02-19",
+          "rxNormCode": "749762"
+        },
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2012-03-01",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "Jolivette 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2011-03-07",
+          "rxNormCode": "757594"
+        },
+        {
+          "name": "NDA020800 0.3 ML Epinephrine 1 MG/ML Auto-Injector",
+          "status": "active",
+          "ordered": "1991-04-27",
+          "dosage": "as needed",
+          "rxNormCode": "1870230"
+        },
+        {
+          "name": "Terfenadine 60 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1991-04-27",
+          "dosage": "as needed",
+          "rxNormCode": "141918"
+        }
+      ]
+    },
+    "get_conditions status=all": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 7,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Acute viral pharyngitis (disorder)",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2019-04-12",
+          "resolved": "2019-04-21",
+          "snomedCode": "195662009"
+        },
+        {
+          "name": "Escherichia coli urinary tract infection",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2017-04-09",
+          "resolved": "2017-05-17",
+          "snomedCode": "301011002"
+        },
+        {
+          "name": "Chronic intractable migraine without aura",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2016-11-12",
+          "snomedCode": "124171000119105"
+        },
+        {
+          "name": "Normal pregnancy",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2016-04-11",
+          "resolved": "2016-11-14",
+          "snomedCode": "72892002"
+        },
+        {
+          "name": "History of cardiac arrest (situation)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1994-07-25",
+          "snomedCode": "429007001"
+        },
+        {
+          "name": "Cardiac Arrest",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1994-07-25",
+          "snomedCode": "410429000"
+        },
+        {
+          "name": "Seasonal allergic rhinitis",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1993-04-22",
+          "snomedCode": "367498001"
+        }
+      ]
+    },
+    "get_allergies": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 7,
+      "moreAvailable": false,
+      "items": [
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to grass pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Shellfish allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Dander (animal) allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        },
+        {
+          "substance": "House dust mite allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1991-04-27"
+        }
+      ]
+    },
+    "get_observations category=laboratory latestOnly=true": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 11,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Erythrocyte distribution width [Entitic volume] by Automated count",
+          "date": "2019-03-04",
+          "value": "43.74 fL",
+          "category": "laboratory",
+          "loincCode": "21000-5"
+        },
+        {
+          "name": "Erythrocytes [#/volume] in Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "5.21 10*6/uL",
+          "category": "laboratory",
+          "loincCode": "789-8"
+        },
+        {
+          "name": "Hematocrit [Volume Fraction] of Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "43.53 %",
+          "category": "laboratory",
+          "loincCode": "4544-3"
+        },
+        {
+          "name": "Hemoglobin [Mass/volume] in Blood",
+          "date": "2019-03-04",
+          "value": "15.2 g/dL",
+          "category": "laboratory",
+          "loincCode": "718-7"
+        },
+        {
+          "name": "Leukocytes [#/volume] in Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "10.21 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "6690-2"
+        },
+        {
+          "name": "MCH [Entitic mass] by Automated count",
+          "date": "2019-03-04",
+          "value": "30.51 pg",
+          "category": "laboratory",
+          "loincCode": "785-6"
+        },
+        {
+          "name": "MCHC [Mass/volume] by Automated count",
+          "date": "2019-03-04",
+          "value": "34.53 g/dL",
+          "category": "laboratory",
+          "loincCode": "786-4"
+        },
+        {
+          "name": "MCV [Entitic volume] by Automated count",
+          "date": "2019-03-04",
+          "value": "90.03 fL",
+          "category": "laboratory",
+          "loincCode": "787-2"
+        },
+        {
+          "name": "Platelet distribution width [Entitic volume] in Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "159.4 fL",
+          "category": "laboratory",
+          "loincCode": "32207-3"
+        },
+        {
+          "name": "Platelet mean volume [Entitic volume] in Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "11.59 fL",
+          "category": "laboratory",
+          "loincCode": "32623-1"
+        },
+        {
+          "name": "Platelets [#/volume] in Blood by Automated count",
+          "date": "2019-03-04",
+          "value": "395.1 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "777-3"
+        }
+      ]
+    },
+    "get_observations category=vital-signs latestOnly=true": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 6,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Blood Pressure",
+          "date": "2019-04-22",
+          "value": "Diastolic Blood Pressure: 78.23 mm[Hg]; Systolic Blood Pressure: 123.8 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2019-04-22",
+          "value": "169.9 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2019-04-22",
+          "value": "21.5 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2019-04-22",
+          "value": "62.07 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Oral temperature",
+          "date": "2019-04-12",
+          "value": "37.92 Cel",
+          "category": "vital-signs",
+          "loincCode": "8331-1"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2019-04-22",
+          "value": "3.997 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ]
+    },
+    "get_observations text=a1c": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 0,
+      "moreAvailable": false,
+      "note": "No matching observations. Try a broader name, no category, or no date.",
+      "items": []
+    },
+    "get_encounters": {
+      "patientId": "6579753c-cb57-4962-a417-a0478b1115aa",
+      "count": 34,
+      "moreAvailable": false,
+      "items": [
+        {
+          "start": "2020-12-28",
+          "end": "2020-12-28",
+          "setting": "ambulatory",
+          "type": "Patient encounter procedure",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-12-05",
+          "end": "2020-12-05",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2019-12-11",
+          "end": "2019-12-11",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2019-04-22",
+          "end": "2019-04-22",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2019-04-12",
+          "end": "2019-04-12",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Acute viral pharyngitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2019-03-04",
+          "end": "2019-03-04",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2018-12-16",
+          "end": "2018-12-16",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2017-12-21",
+          "end": "2017-12-21",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2017-04-09",
+          "end": "2017-05-10",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Escherichia coli urinary tract infection"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-12-26",
+          "end": "2016-12-26",
+          "setting": "ambulatory",
+          "type": "Postnatal visit",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2016-12-26",
+          "end": "2016-12-26",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2016-11-14",
+          "end": "2016-11-14",
+          "setting": "emergency",
+          "type": "Obstetric emergency hospital admission",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-11-12",
+          "end": "2016-11-13",
+          "setting": "inpatient",
+          "type": "Encounter Inpatient",
+          "reasons": [
+            "Chronic intractable migraine without aura"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-11-07",
+          "end": "2016-11-07",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-10-24",
+          "end": "2016-10-24",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-09-26",
+          "end": "2016-09-26",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-08-29",
+          "end": "2016-08-29",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-08-01",
+          "end": "2016-08-01",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-07-04",
+          "end": "2016-07-04",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-06-06",
+          "end": "2016-06-06",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-05-09",
+          "end": "2016-05-09",
+          "setting": "ambulatory",
+          "type": "Prenatal visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-04-11",
+          "end": "2016-04-11",
+          "setting": "ambulatory",
+          "type": "Prenatal initial visit",
+          "reasons": [
+            "Normal pregnancy"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-02-29",
+          "end": "2016-02-29",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2016-02-08",
+          "end": "2016-02-08",
+          "setting": "ambulatory",
+          "type": "Patient encounter procedure",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2015-02-17",
+          "end": "2015-02-17",
+          "setting": "ambulatory",
+          "type": "Patient encounter procedure",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2015-02-14",
+          "end": "2015-02-14",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2014-02-19",
+          "end": "2014-02-19",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2013-02-25",
+          "end": "2013-02-25",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2012-03-01",
+          "end": "2012-03-01",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2011-03-07",
+          "end": "2011-03-07",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1994-07-25",
+          "end": "1994-07-29",
+          "setting": "emergency",
+          "type": "Emergency Encounter",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1993-04-22",
+          "end": "1993-05-06",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Seasonal allergic rhinitis"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1991-04-27",
+          "end": "1991-04-27",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1991-04-15",
+          "end": "1991-04-15",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        }
+      ]
+    }
+  }
+}

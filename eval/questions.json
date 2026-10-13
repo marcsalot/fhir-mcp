@@ -1,0 +1,963 @@
+{
+  "description": "Clinical questions about synthetic patients on the SMART Health IT R4 sandbox. Each expected answer was checked against the tool output frozen in eval/context, and each reference answer is a correct answer written from that record (a test checks that every reference passes its own grading). Patterns are case-insensitive regular expressions.",
+  "questions": [
+    {
+      "id": "reyna-active-meds",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What medications is Reyna Ziemann currently taking?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "hydrochlorothiazide",
+            "hctz"
+          ],
+          [
+            "ferrous sulfate",
+            "iron"
+          ],
+          [
+            "fluticasone"
+          ],
+          [
+            "albuterol"
+          ],
+          [
+            "diphenhydramine",
+            "benadryl"
+          ]
+        ]
+      },
+      "reference": "She is currently taking hydrochlorothiazide 25 mg, ferrous sulfate 325 mg tablets, a fluticasone propionate inhaler and an albuterol inhaler as needed, and diphenhydramine 25 mg as needed."
+    },
+    {
+      "id": "reyna-bp-med",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Is Reyna Ziemann on any medication for high blood pressure? If so, which one?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "hydrochlorothiazide",
+            "hctz"
+          ]
+        ]
+      },
+      "reference": "Yes. She takes hydrochlorothiazide 25 mg, a thiazide diuretic used for hypertension."
+    },
+    {
+      "id": "reyna-metformin",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Is Reyna Ziemann taking metformin?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. Metformin is not among her medication orders."
+    },
+    {
+      "id": "reyna-drug-allergy",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Does Reyna Ziemann have any medication (drug) allergies on file?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. Her 10 recorded allergies are to foods, pollens, latex, dust mites, mould, animal dander and bee venom; none is to a medication."
+    },
+    {
+      "id": "reyna-allergy-count",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "How many allergies does Reyna Ziemann have on file?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 10,
+              "tolerance": 0
+            }
+          ]
+        ]
+      },
+      "reference": "She has 10 allergies on file."
+    },
+    {
+      "id": "reyna-food-allergies",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Which food allergies does Reyna Ziemann have?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "peanut"
+          ],
+          [
+            "shellfish"
+          ],
+          [
+            "dairy",
+            "milk"
+          ]
+        ],
+        "none": [
+          "wheat",
+          "soy"
+        ]
+      },
+      "reference": "She is allergic to peanuts, shellfish and dairy products."
+    },
+    {
+      "id": "reyna-diabetes",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Does Reyna Ziemann have diabetes?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "startsWith": "no",
+        "all": [
+          [
+            "prediabet",
+            "pre-diabet"
+          ]
+        ]
+      },
+      "reference": "No. She has prediabetes, recorded since 2014-02-27, but not diabetes."
+    },
+    {
+      "id": "reyna-hypertension-onset",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "In what year was Reyna Ziemann diagnosed with hypertension?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "1992"
+          ]
+        ]
+      },
+      "reference": "Hypertension was first recorded on 1992-10-08."
+    },
+    {
+      "id": "reyna-a1c-latest",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What was Reyna Ziemann's most recent hemoglobin A1c value?",
+      "category": "labs",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 5.96,
+              "tolerance": 0.011
+            }
+          ]
+        ]
+      },
+      "reference": "Her most recent hemoglobin A1c was 5.959% on 2020-02-06."
+    },
+    {
+      "id": "reyna-a1c-peak",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What was Reyna Ziemann's highest hemoglobin A1c on record, and in what year was it measured?",
+      "category": "labs",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 6.37,
+              "tolerance": 0.011
+            }
+          ]
+        ],
+        "all": [
+          [
+            "2016"
+          ]
+        ]
+      },
+      "reference": "Her highest A1c was 6.366%, measured in 2016 (2016-03-03)."
+    },
+    {
+      "id": "reyna-a1c-trend",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Has Reyna Ziemann's hemoglobin A1c gone up or down since its peak?",
+      "category": "labs",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "down",
+            "decreas",
+            "lower",
+            "improv",
+            "declin",
+            "fell",
+            "dropped"
+          ]
+        ]
+      },
+      "reference": "It has gone down: from a peak of 6.366% in 2016 to 5.959% in 2020."
+    },
+    {
+      "id": "reyna-last-bp",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What was Reyna Ziemann's most recent blood pressure reading?",
+      "category": "vitals",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 154.4,
+              "tolerance": 0.6
+            }
+          ],
+          [
+            {
+              "value": 90.46,
+              "tolerance": 0.6
+            }
+          ]
+        ]
+      },
+      "reference": "Her most recent blood pressure was 154.4/90.46 mm[Hg] on 2020-02-06."
+    },
+    {
+      "id": "reyna-weight",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What is Reyna Ziemann's most recent recorded weight?",
+      "category": "vitals",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 77.85,
+              "tolerance": 0.2
+            },
+            {
+              "value": 171.6,
+              "tolerance": 1.0
+            }
+          ]
+        ]
+      },
+      "reference": "Her most recent weight was 77.85 kg on 2020-02-06."
+    },
+    {
+      "id": "reyna-last-visit",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "What was the date of Reyna Ziemann's most recent visit, and what was it for?",
+      "category": "visits",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "2020-05-27|May 27,? 2020|May\\.? 27,? 2020|0?5/0?27/2020|27 May,? 2020"
+          ],
+          [
+            "asthma"
+          ]
+        ]
+      },
+      "reference": "Her most recent visit was on 2020-05-27, an ambulatory asthma follow-up."
+    },
+    {
+      "id": "reyna-sinusitis",
+      "patient": "reyna-ziemann",
+      "patientName": "Reyna Ziemann",
+      "question": "Which of Reyna Ziemann's sinus conditions is still active?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "chronic sinusitis"
+          ]
+        ]
+      },
+      "reference": "Chronic sinusitis is still active; the acute bacterial and viral sinusitis episodes are resolved."
+    },
+    {
+      "id": "mathilda-epinephrine",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "Does Mathilda O'Keefe have an epinephrine auto-injector prescribed?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes"
+      },
+      "reference": "Yes. She has an active order for a 0.3 mL epinephrine 1 mg/mL auto-injector, to use as needed."
+    },
+    {
+      "id": "mathilda-active-meds",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "List Mathilda O'Keefe's active medications.",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "nuvaring",
+            "vaginal ring"
+          ],
+          [
+            "fluticasone"
+          ],
+          [
+            "albuterol"
+          ],
+          [
+            "epinephrine",
+            "epipen",
+            "auto-injector"
+          ],
+          [
+            "fexofenadine",
+            "allegra"
+          ]
+        ]
+      },
+      "reference": "Her active medications are a NuvaRing vaginal ring, a fluticasone inhaler, an albuterol inhaler, an epinephrine auto-injector and fexofenadine 30 mg tablets."
+    },
+    {
+      "id": "mathilda-acetaminophen",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "Is Mathilda O'Keefe currently taking acetaminophen?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. Her acetaminophen 160 mg order is stopped."
+    },
+    {
+      "id": "mathilda-allergies",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "What is Mathilda O'Keefe allergic to?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "grass"
+          ],
+          [
+            "bee"
+          ],
+          [
+            "wheat"
+          ],
+          [
+            "dander",
+            "animal"
+          ],
+          [
+            "tree"
+          ],
+          [
+            "mould",
+            "mold"
+          ]
+        ],
+        "none": [
+          "peanut",
+          "shellfish"
+        ]
+      },
+      "reference": "She is allergic to grass pollen, bee venom, wheat, animal dander, tree pollen and mould."
+    },
+    {
+      "id": "mathilda-a1c",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "What was Mathilda O'Keefe's most recent hemoglobin A1c?",
+      "category": "absent-data",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "no ",
+            "not ",
+            "none",
+            "n't"
+          ]
+        ],
+        "none": [
+          "\\d+(\\.\\d+)?\\s*%"
+        ]
+      },
+      "reference": "There is no hemoglobin A1c result on file for her."
+    },
+    {
+      "id": "mathilda-asthma",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "Does Mathilda O'Keefe have asthma?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "startsWith": "yes"
+      },
+      "reference": "Yes. Childhood asthma has been active since 2009-08-06."
+    },
+    {
+      "id": "mathilda-last-bp",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "What was Mathilda O'Keefe's most recent blood pressure?",
+      "category": "vitals",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 114.7,
+              "tolerance": 0.6
+            }
+          ],
+          [
+            {
+              "value": 73.9,
+              "tolerance": 0.6
+            }
+          ]
+        ]
+      },
+      "reference": "Her most recent blood pressure was 114.7/73.9 mm[Hg] on 2020-08-31."
+    },
+    {
+      "id": "mathilda-neck-injury",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "Has Mathilda O'Keefe ever had a neck injury? If so, what and when?",
+      "category": "history",
+      "critical": false,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "whiplash"
+          ],
+          [
+            "2013"
+          ]
+        ]
+      },
+      "reference": "Yes. She had a whiplash injury to the neck in 2013 (2013-06-24), which resolved on 2013-07-22."
+    },
+    {
+      "id": "mathilda-dermatitis-onset",
+      "patient": "mathilda-okeefe",
+      "patientName": "Mathilda O'Keefe",
+      "question": "On what date did Mathilda O'Keefe's atopic dermatitis begin?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "2008-04-28|April 28,? 2008|Apr\\.? 28,? 2008|0?4/0?28/2008|28 April,? 2008"
+          ]
+        ]
+      },
+      "reference": "Her atopic dermatitis began on 2008-04-28."
+    },
+    {
+      "id": "ima-migraine",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "What kind of migraine does Ima Reinger have, and in what year did it begin?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "without aura"
+          ],
+          [
+            "2016"
+          ]
+        ]
+      },
+      "reference": "She has chronic intractable migraine without aura, which began in 2016 (2016-11-12)."
+    },
+    {
+      "id": "ima-active-meds",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "What is Ima Reinger currently prescribed?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "trinessa"
+          ],
+          [
+            "epinephrine",
+            "epipen",
+            "auto-injector"
+          ],
+          [
+            "terfenadine"
+          ]
+        ],
+        "none": [
+          "mirena",
+          "yaz",
+          "seasonique",
+          "natazia",
+          "jolivette",
+          "oxycodone",
+          "nitrofurantoin",
+          "phenazopyridine"
+        ]
+      },
+      "reference": "She is currently prescribed Trinessa 28 Day Pack, an epinephrine auto-injector and terfenadine 60 mg tablets."
+    },
+    {
+      "id": "ima-opioid-now",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Is Ima Reinger currently taking any opioid?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. Her only opioid order, acetaminophen with oxycodone, is stopped."
+    },
+    {
+      "id": "ima-opioid-ever",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Has Ima Reinger ever been prescribed an opioid? If so, which?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "oxycodone"
+          ]
+        ]
+      },
+      "reference": "Yes. She was prescribed acetaminophen 325 mg / oxycodone 5 mg tablets in 2016; that order is now stopped."
+    },
+    {
+      "id": "ima-pregnancy",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Has Ima Reinger been pregnant? If so, in what year?",
+      "category": "history",
+      "critical": false,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "2016"
+          ]
+        ]
+      },
+      "reference": "Yes. A normal pregnancy is recorded from 2016-04-11 to 2016-11-14."
+    },
+    {
+      "id": "ima-uti-meds",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Which medications were ordered around the time of Ima Reinger's urinary tract infection?",
+      "category": "medications",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "nitrofurantoin"
+          ],
+          [
+            "phenazopyridine"
+          ]
+        ]
+      },
+      "reference": "Nitrofurantoin oral suspension and phenazopyridine 100 mg tablets were ordered on 2017-05-10, during her E. coli urinary tract infection."
+    },
+    {
+      "id": "ima-shellfish",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Is Ima Reinger allergic to shellfish?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes"
+      },
+      "reference": "Yes. She has a shellfish allergy on file."
+    },
+    {
+      "id": "ima-peanut",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "Is Ima Reinger allergic to peanuts?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. A peanut allergy is not among her recorded allergies."
+    },
+    {
+      "id": "ima-temperature",
+      "patient": "ima-reinger",
+      "patientName": "Ima Reinger",
+      "question": "What was Ima Reinger's most recent recorded body temperature?",
+      "category": "vitals",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 37.92,
+              "tolerance": 0.06
+            },
+            {
+              "value": 100.3,
+              "tolerance": 0.2
+            }
+          ]
+        ]
+      },
+      "reference": "Her most recent oral temperature was 37.92 Cel on 2019-04-12."
+    },
+    {
+      "id": "jill-b12",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "Is Jill Tillman receiving vitamin B12? If so, in what form?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "inject"
+          ]
+        ]
+      },
+      "reference": "Yes. She receives vitamin B12 5 mg/mL as an injectable solution."
+    },
+    {
+      "id": "jill-nut-allergy",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "Does Jill Tillman have any nut allergies?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "peanut"
+          ]
+        ]
+      },
+      "reference": "Yes. She is allergic to peanuts and to nuts."
+    },
+    {
+      "id": "jill-soy",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "Is Jill Tillman allergic to soy?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "yes"
+      },
+      "reference": "Yes. She has an allergy to soya."
+    },
+    {
+      "id": "jill-bmi",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "What is Jill Tillman's most recent BMI, and is it in the obese range?",
+      "category": "vitals",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 30.38,
+              "tolerance": 0.06
+            }
+          ]
+        ],
+        "all": [
+          [
+            "obes"
+          ]
+        ]
+      },
+      "reference": "Her most recent BMI was 30.38 kg/m2 on 2020-02-25, which is in the obese range."
+    },
+    {
+      "id": "jill-active-meds",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "List Jill Tillman's current medications.",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "trinessa"
+          ],
+          [
+            "b12",
+            "b 12",
+            "cobalamin"
+          ],
+          [
+            "diphenhydramine",
+            "benadryl"
+          ],
+          [
+            "fluticasone"
+          ],
+          [
+            "albuterol"
+          ]
+        ],
+        "none": [
+          "nuvaring",
+          "jolivette",
+          "nitrofurantoin",
+          "phenazopyridine",
+          "etonogestrel"
+        ]
+      },
+      "reference": "Her current medications are Trinessa 28 Day Pack, vitamin B12 injection, diphenhydramine 25 mg as needed, a fluticasone inhaler and an albuterol inhaler."
+    },
+    {
+      "id": "jill-sinusitis-onset",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "Since what year has Jill Tillman had chronic sinusitis?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "1988"
+          ]
+        ]
+      },
+      "reference": "She has had chronic sinusitis since 1988."
+    },
+    {
+      "id": "jill-last-visit",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "When was Jill Tillman's most recent visit, and what was it for?",
+      "category": "visits",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "2021-01-31|January 31,? 2021|Jan\\.? 31,? 2021|0?1/0?31/2021|31 January,? 2021"
+          ],
+          [
+            "asthma"
+          ]
+        ]
+      },
+      "reference": "Her most recent visit was on 2021-01-31, an asthma follow-up."
+    },
+    {
+      "id": "jill-diabetes",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "Does Jill Tillman have diabetes or prediabetes?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. Neither diabetes nor prediabetes is recorded among her conditions."
+    },
+    {
+      "id": "jill-uti",
+      "patient": "jill-tillman",
+      "patientName": "Jill Tillman",
+      "question": "In what year did Jill Tillman have a urinary tract infection?",
+      "category": "history",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "2015"
+          ]
+        ]
+      },
+      "reference": "She had an E. coli urinary tract infection in 2015."
+    },
+    {
+      "id": "adolph-active-meds",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "What medications is Adolph Smith currently taking?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "no active",
+            "no current",
+            "none",
+            "not currently",
+            "isn't currently",
+            "is not currently",
+            "not taking",
+            "no medication"
+          ]
+        ]
+      },
+      "reference": "He has no active medications; his only orders, ibuprofen and naproxen, are stopped."
+    },
+    {
+      "id": "adolph-seizure-med",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "Is Adolph Smith on any medication for his seizure disorder?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. There are no active medication orders, so nothing is prescribed for his seizure disorder."
+    },
+    {
+      "id": "adolph-allergies",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "Does Adolph Smith have any allergies on file?",
+      "category": "allergies",
+      "critical": true,
+      "grading": {
+        "startsWith": "no"
+      },
+      "reference": "No. No allergies are recorded for him, which means none are on file."
+    },
+    {
+      "id": "adolph-past-meds",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "What medications has Adolph Smith been prescribed in the past?",
+      "category": "medications",
+      "critical": true,
+      "grading": {
+        "all": [
+          [
+            "ibuprofen"
+          ],
+          [
+            "naproxen"
+          ]
+        ]
+      },
+      "reference": "He was prescribed ibuprofen 200 mg and naproxen sodium 220 mg in the past; both are stopped."
+    },
+    {
+      "id": "adolph-a1c",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "What was Adolph Smith's most recent hemoglobin A1c value?",
+      "category": "labs",
+      "critical": false,
+      "grading": {
+        "numbers": [
+          [
+            {
+              "value": 6.19,
+              "tolerance": 0.011
+            }
+          ]
+        ]
+      },
+      "reference": "His most recent hemoglobin A1c was 6.189% on 2021-01-20."
+    },
+    {
+      "id": "adolph-anemia",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "Does Adolph Smith have anemia?",
+      "category": "conditions",
+      "critical": false,
+      "grading": {
+        "startsWith": "yes"
+      },
+      "reference": "Yes. Anemia has been an active condition since 1973."
+    },
+    {
+      "id": "adolph-fracture",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "Has Adolph Smith ever had a fracture? If so, where and in what year?",
+      "category": "history",
+      "critical": false,
+      "grading": {
+        "startsWith": "yes",
+        "all": [
+          [
+            "wrist"
+          ],
+          [
+            "2018"
+          ]
+        ]
+      },
+      "reference": "Yes. He had a fracture subluxation of the wrist in 2018 (2018-12-18)."
+    },
+    {
+      "id": "adolph-last-visit",
+      "patient": "adolph-smith",
+      "patientName": "Adolph Smith",
+      "question": "What was the date of Adolph Smith's most recent visit?",
+      "category": "visits",
+      "critical": false,
+      "grading": {
+        "all": [
+          [
+            "2021-01-20|January 20,? 2021|Jan\\.? 20,? 2021|0?1/0?20/2021|20 January,? 2021"
+          ]
+        ]
+      },
+      "reference": "His most recent visit was a check-up on 2021-01-20."
+    }
+  ]
+}

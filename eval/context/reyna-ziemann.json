@@ -1,0 +1,894 @@
+{
+  "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+  "source": "https://r4.smarthealthit.org/",
+  "capturedOn": "2026-10-13",
+  "tools": {
+    "get_patient_summary": {
+      "patient": {
+        "id": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+        "name": "Reyna Ziemann",
+        "otherNames": [
+          "Reyna Rice (maiden)"
+        ],
+        "gender": "female",
+        "birthDate": "1974-02-28",
+        "age": 52,
+        "city": "Raynham",
+        "state": "Massachusetts",
+        "deceased": false
+      },
+      "activeConditions": [
+        {
+          "name": "Chronic sinusitis (disorder)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2020-03-10",
+          "snomedCode": "40055000"
+        },
+        {
+          "name": "Prediabetes",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2014-02-27",
+          "snomedCode": "15777000"
+        },
+        {
+          "name": "Body mass index 30+ - obesity (finding)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2008-02-21",
+          "snomedCode": "162864005"
+        },
+        {
+          "name": "Hypertension",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1992-10-08",
+          "snomedCode": "38341003"
+        },
+        {
+          "name": "Cardiac Arrest",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1983-03-31",
+          "snomedCode": "410429000"
+        },
+        {
+          "name": "History of cardiac arrest (situation)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1983-03-31",
+          "snomedCode": "429007001"
+        },
+        {
+          "name": "Perennial allergic rhinitis with seasonal variation",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1976-03-06",
+          "snomedCode": "232353008"
+        }
+      ],
+      "activeMedications": [
+        {
+          "name": "ferrous sulfate 325 MG Oral Tablet",
+          "status": "active",
+          "ordered": "2006-08-03",
+          "rxNormCode": "310325"
+        },
+        {
+          "name": "Hydrochlorothiazide 25 MG",
+          "status": "active",
+          "ordered": "1992-10-08",
+          "rxNormCode": "316049"
+        },
+        {
+          "name": "120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1978-03-06",
+          "dosage": "as needed",
+          "rxNormCode": "895994"
+        },
+        {
+          "name": "200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1978-03-06",
+          "dosage": "as needed",
+          "rxNormCode": "745679"
+        },
+        {
+          "name": "diphenhydrAMINE Hydrochloride 25 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1976-03-20",
+          "dosage": "as needed",
+          "rxNormCode": "1049630"
+        }
+      ],
+      "allergies": [
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Shellfish allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Latex allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "House dust mite allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to peanuts",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to grass pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to dairy product",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Dander (animal) allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        }
+      ],
+      "latestVitals": [
+        {
+          "name": "Blood Pressure",
+          "date": "2020-02-06",
+          "value": "Diastolic Blood Pressure: 90.46 mm[Hg]; Systolic Blood Pressure: 154.4 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2020-02-06",
+          "value": "162.1 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2020-02-06",
+          "value": "29.63 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2020-02-06",
+          "value": "77.85 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2020-02-06",
+          "value": "1.842 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ],
+      "lastEncounter": {
+        "start": "2020-05-27",
+        "end": "2020-05-27",
+        "setting": "ambulatory",
+        "type": "Asthma follow-up",
+        "reasons": [
+          "Asthma"
+        ],
+        "status": "finished"
+      }
+    },
+    "get_medications status=all": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 5,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "ferrous sulfate 325 MG Oral Tablet",
+          "status": "active",
+          "ordered": "2006-08-03",
+          "rxNormCode": "310325"
+        },
+        {
+          "name": "Hydrochlorothiazide 25 MG",
+          "status": "active",
+          "ordered": "1992-10-08",
+          "rxNormCode": "316049"
+        },
+        {
+          "name": "120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1978-03-06",
+          "dosage": "as needed",
+          "rxNormCode": "895994"
+        },
+        {
+          "name": "200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1978-03-06",
+          "dosage": "as needed",
+          "rxNormCode": "745679"
+        },
+        {
+          "name": "diphenhydrAMINE Hydrochloride 25 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1976-03-20",
+          "dosage": "as needed",
+          "rxNormCode": "1049630"
+        }
+      ]
+    },
+    "get_conditions status=all": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 9,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Chronic sinusitis (disorder)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2020-03-10",
+          "snomedCode": "40055000"
+        },
+        {
+          "name": "Acute bacterial sinusitis (disorder)",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2020-02-04",
+          "resolved": "2020-04-07",
+          "snomedCode": "75498004"
+        },
+        {
+          "name": "Viral sinusitis (disorder)",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2018-09-13",
+          "resolved": "2018-10-04",
+          "snomedCode": "444814009"
+        },
+        {
+          "name": "Prediabetes",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2014-02-27",
+          "snomedCode": "15777000"
+        },
+        {
+          "name": "Body mass index 30+ - obesity (finding)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2008-02-21",
+          "snomedCode": "162864005"
+        },
+        {
+          "name": "Hypertension",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1992-10-08",
+          "snomedCode": "38341003"
+        },
+        {
+          "name": "Cardiac Arrest",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1983-03-31",
+          "snomedCode": "410429000"
+        },
+        {
+          "name": "History of cardiac arrest (situation)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1983-03-31",
+          "snomedCode": "429007001"
+        },
+        {
+          "name": "Perennial allergic rhinitis with seasonal variation",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1976-03-06",
+          "snomedCode": "232353008"
+        }
+      ]
+    },
+    "get_allergies": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 10,
+      "moreAvailable": false,
+      "items": [
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Shellfish allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Latex allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "House dust mite allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to peanuts",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to grass pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Allergy to dairy product",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        },
+        {
+          "substance": "Dander (animal) allergy",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1975-06-09"
+        }
+      ]
+    },
+    "get_observations category=laboratory latestOnly=true": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 25,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Calcium",
+          "date": "2020-02-06",
+          "value": "8.809 mg/dL",
+          "category": "laboratory",
+          "loincCode": "49765-1"
+        },
+        {
+          "name": "Carbon Dioxide",
+          "date": "2020-02-06",
+          "value": "27.88 mmol/L",
+          "category": "laboratory",
+          "loincCode": "20565-8"
+        },
+        {
+          "name": "Chloride",
+          "date": "2020-02-06",
+          "value": "110.9 mmol/L",
+          "category": "laboratory",
+          "loincCode": "2069-3"
+        },
+        {
+          "name": "Creatinine",
+          "date": "2020-02-06",
+          "value": "0.8728 mg/dL",
+          "category": "laboratory",
+          "loincCode": "38483-4"
+        },
+        {
+          "name": "Erythrocyte distribution width [Entitic volume] by Automated count",
+          "date": "2020-02-06",
+          "value": "40.06 fL",
+          "category": "laboratory",
+          "loincCode": "21000-5"
+        },
+        {
+          "name": "Erythrocytes [#/volume] in Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "4.688 10*6/uL",
+          "category": "laboratory",
+          "loincCode": "789-8"
+        },
+        {
+          "name": "Estimated Glomerular Filtration Rate",
+          "date": "2020-02-06",
+          "value": "124.2 mL/min/{1.73_m2}",
+          "category": "laboratory",
+          "loincCode": "33914-3"
+        },
+        {
+          "name": "Glucose",
+          "date": "2020-02-06",
+          "value": "93.44 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2339-0"
+        },
+        {
+          "name": "Hematocrit [Volume Fraction] of Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "45.87 %",
+          "category": "laboratory",
+          "loincCode": "4544-3"
+        },
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2020-02-06",
+          "value": "5.959 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        },
+        {
+          "name": "Hemoglobin [Mass/volume] in Blood",
+          "date": "2020-02-06",
+          "value": "12.59 g/dL",
+          "category": "laboratory",
+          "loincCode": "718-7"
+        },
+        {
+          "name": "High Density Lipoprotein Cholesterol",
+          "date": "2018-03-08",
+          "value": "74.53 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2085-9"
+        },
+        {
+          "name": "Leukocytes [#/volume] in Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "9.959 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "6690-2"
+        },
+        {
+          "name": "Low Density Lipoprotein Cholesterol",
+          "date": "2018-03-08",
+          "value": "103.9 mg/dL",
+          "category": "laboratory",
+          "loincCode": "18262-6"
+        },
+        {
+          "name": "MCH [Entitic mass] by Automated count",
+          "date": "2020-02-06",
+          "value": "32.28 pg",
+          "category": "laboratory",
+          "loincCode": "785-6"
+        },
+        {
+          "name": "MCHC [Mass/volume] by Automated count",
+          "date": "2020-02-06",
+          "value": "34.37 g/dL",
+          "category": "laboratory",
+          "loincCode": "786-4"
+        },
+        {
+          "name": "MCV [Entitic volume] by Automated count",
+          "date": "2020-02-06",
+          "value": "84.06 fL",
+          "category": "laboratory",
+          "loincCode": "787-2"
+        },
+        {
+          "name": "Platelet distribution width [Entitic volume] in Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "274.9 fL",
+          "category": "laboratory",
+          "loincCode": "32207-3"
+        },
+        {
+          "name": "Platelet mean volume [Entitic volume] in Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "9.641 fL",
+          "category": "laboratory",
+          "loincCode": "32623-1"
+        },
+        {
+          "name": "Platelets [#/volume] in Blood by Automated count",
+          "date": "2020-02-06",
+          "value": "359.2 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "777-3"
+        },
+        {
+          "name": "Potassium",
+          "date": "2020-02-06",
+          "value": "3.919 mmol/L",
+          "category": "laboratory",
+          "loincCode": "6298-4"
+        },
+        {
+          "name": "Sodium",
+          "date": "2020-02-06",
+          "value": "143.9 mmol/L",
+          "category": "laboratory",
+          "loincCode": "2947-0"
+        },
+        {
+          "name": "Total Cholesterol",
+          "date": "2018-03-08",
+          "value": "198.8 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2093-3"
+        },
+        {
+          "name": "Triglycerides",
+          "date": "2018-03-08",
+          "value": "101.7 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2571-8"
+        },
+        {
+          "name": "Urea Nitrogen",
+          "date": "2020-02-06",
+          "value": "15.59 mg/dL",
+          "category": "laboratory",
+          "loincCode": "6299-2"
+        }
+      ]
+    },
+    "get_observations category=vital-signs latestOnly=true": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 5,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Blood Pressure",
+          "date": "2020-02-06",
+          "value": "Diastolic Blood Pressure: 90.46 mm[Hg]; Systolic Blood Pressure: 154.4 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2020-02-06",
+          "value": "162.1 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2020-02-06",
+          "value": "29.63 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2020-02-06",
+          "value": "77.85 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2020-02-06",
+          "value": "1.842 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ]
+    },
+    "get_observations text=a1c": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 5,
+      "moreAvailable": false,
+      "note": "No test name started with \"a1c\", so these are results whose name contains those words, from the 102 most recent observations checked.",
+      "items": [
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2020-02-06",
+          "value": "5.959 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        },
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2018-09-13",
+          "value": "5.953 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        },
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2018-03-08",
+          "value": "6.186 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        },
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2016-03-03",
+          "value": "6.366 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        },
+        {
+          "name": "Hemoglobin A1c/Hemoglobin.total in Blood",
+          "date": "2014-02-27",
+          "value": "6.055 %",
+          "category": "laboratory",
+          "loincCode": "4548-4"
+        }
+      ]
+    },
+    "get_encounters": {
+      "patientId": "76d2fa2d-66a6-4823-8dab-52cd70822844",
+      "count": 23,
+      "moreAvailable": false,
+      "items": [
+        {
+          "start": "2020-05-27",
+          "end": "2020-05-27",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2020-03-26",
+          "end": "2020-03-26",
+          "setting": "ambulatory",
+          "type": "Outpatient procedure (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-03-19",
+          "end": "2020-03-19",
+          "setting": "ambulatory",
+          "type": "Outpatient procedure (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-03-17",
+          "end": "2020-03-17",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Acute bacterial sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2020-03-10",
+          "end": "2020-03-10",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Acute bacterial sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2020-02-06",
+          "end": "2020-02-06",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-02-04",
+          "end": "2020-02-04",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Acute bacterial sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2018-09-13",
+          "end": "2018-09-13",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Viral sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2018-09-13",
+          "end": "2018-09-13",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2018-03-08",
+          "end": "2018-03-08",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2016-03-03",
+          "end": "2016-03-03",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2014-12-25",
+          "end": "2014-12-25",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2014-02-28",
+          "end": "2014-02-28",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2014-02-27",
+          "end": "2014-02-27",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2013-01-04",
+          "end": "2013-01-04",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2008-02-21",
+          "end": "2008-02-21",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2006-08-03",
+          "end": "2006-08-03",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [
+            "Anemia (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1992-10-08",
+          "end": "1992-10-08",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1983-03-31",
+          "end": "1983-04-04",
+          "setting": "emergency",
+          "type": "Emergency Encounter",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1978-03-06",
+          "end": "1978-03-06",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Childhood asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1976-03-06",
+          "end": "1976-03-20",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Perennial allergic rhinitis with seasonal variation"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1975-06-09",
+          "end": "1975-06-09",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1975-05-24",
+          "end": "1975-05-24",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        }
+      ]
+    }
+  }
+}

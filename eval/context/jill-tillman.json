@@ -1,0 +1,764 @@
+{
+  "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+  "source": "https://r4.smarthealthit.org/",
+  "capturedOn": "2026-10-13",
+  "tools": {
+    "get_patient_summary": {
+      "patient": {
+        "id": "f341c771-5aff-4858-9406-9d45e8a56246",
+        "name": "Jill Tillman",
+        "otherNames": [
+          "Jill Hackett (maiden)"
+        ],
+        "gender": "female",
+        "birthDate": "1971-05-18",
+        "age": 55,
+        "city": "Boston",
+        "state": "Massachusetts",
+        "deceased": false
+      },
+      "activeConditions": [
+        {
+          "name": "Body mass index 30+ - obesity (finding)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2016-02-16",
+          "snomedCode": "162864005"
+        },
+        {
+          "name": "Chronic sinusitis (disorder)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1988-09-14",
+          "snomedCode": "40055000"
+        },
+        {
+          "name": "Seasonal allergic rhinitis",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1975-05-24",
+          "snomedCode": "367498001"
+        }
+      ],
+      "activeMedications": [
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "active",
+          "ordered": "2021-01-03",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "Vitamin B 12 5 MG/ML Injectable Solution",
+          "status": "active",
+          "ordered": "1999-03-17",
+          "rxNormCode": "2001499"
+        },
+        {
+          "name": "diphenhydrAMINE Hydrochloride 25 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1975-06-07",
+          "dosage": "as needed",
+          "rxNormCode": "1049630"
+        },
+        {
+          "name": "120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1974-05-24",
+          "dosage": "as needed",
+          "rxNormCode": "895994"
+        },
+        {
+          "name": "200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1974-05-24",
+          "dosage": "as needed",
+          "rxNormCode": "745679"
+        }
+      ],
+      "allergies": [
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to peanuts",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to nut",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to soya",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        }
+      ],
+      "latestVitals": [
+        {
+          "name": "Blood Pressure",
+          "date": "2020-02-25",
+          "value": "Diastolic Blood Pressure: 77.37 mm[Hg]; Systolic Blood Pressure: 112.3 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2020-02-25",
+          "value": "168.2 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2020-02-25",
+          "value": "30.38 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2020-02-25",
+          "value": "85.96 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2020-02-25",
+          "value": "3.304 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ],
+      "lastEncounter": {
+        "start": "2021-01-31",
+        "end": "2021-01-31",
+        "setting": "ambulatory",
+        "type": "Asthma follow-up",
+        "reasons": [
+          "Asthma"
+        ],
+        "status": "finished"
+      }
+    },
+    "get_medications status=all": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 12,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "active",
+          "ordered": "2021-01-03",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "NuvaRing 0.12/0.015 MG per 24HR 21 Day Vaginal Ring",
+          "status": "stopped",
+          "ordered": "2020-01-09",
+          "rxNormCode": "1367439"
+        },
+        {
+          "name": "Etonogestrel 68 MG Drug Implant",
+          "status": "stopped",
+          "ordered": "2019-01-14",
+          "rxNormCode": "389221"
+        },
+        {
+          "name": "Etonogestrel 68 MG Drug Implant",
+          "status": "stopped",
+          "ordered": "2017-01-24",
+          "rxNormCode": "389221"
+        },
+        {
+          "name": "Nitrofurantoin 5 MG/ML Oral Suspension",
+          "status": "stopped",
+          "ordered": "2015-06-20",
+          "rxNormCode": "311989"
+        },
+        {
+          "name": "Phenazopyridine hydrochloride 100 MG Oral Tablet",
+          "status": "stopped",
+          "ordered": "2015-06-20",
+          "rxNormCode": "1094107"
+        },
+        {
+          "name": "Trinessa 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2013-02-14",
+          "rxNormCode": "751905"
+        },
+        {
+          "name": "Jolivette 28 Day Pack",
+          "status": "stopped",
+          "ordered": "2012-02-20",
+          "rxNormCode": "757594"
+        },
+        {
+          "name": "Vitamin B 12 5 MG/ML Injectable Solution",
+          "status": "active",
+          "ordered": "1999-03-17",
+          "rxNormCode": "2001499"
+        },
+        {
+          "name": "diphenhydrAMINE Hydrochloride 25 MG Oral Tablet",
+          "status": "active",
+          "ordered": "1975-06-07",
+          "dosage": "as needed",
+          "rxNormCode": "1049630"
+        },
+        {
+          "name": "120 ACTUAT Fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1974-05-24",
+          "dosage": "as needed",
+          "rxNormCode": "895994"
+        },
+        {
+          "name": "200 ACTUAT Albuterol 0.09 MG/ACTUAT Metered Dose Inhaler",
+          "status": "active",
+          "ordered": "1974-05-24",
+          "dosage": "as needed",
+          "rxNormCode": "745679"
+        }
+      ]
+    },
+    "get_conditions status=all": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 5,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Body mass index 30+ - obesity (finding)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "2016-02-16",
+          "snomedCode": "162864005"
+        },
+        {
+          "name": "Escherichia coli urinary tract infection",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2015-05-07",
+          "resolved": "2015-06-27",
+          "snomedCode": "301011002"
+        },
+        {
+          "name": "Viral sinusitis (disorder)",
+          "clinicalStatus": "resolved",
+          "verificationStatus": "confirmed",
+          "onset": "2012-02-07",
+          "resolved": "2012-02-14",
+          "snomedCode": "444814009"
+        },
+        {
+          "name": "Chronic sinusitis (disorder)",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1988-09-14",
+          "snomedCode": "40055000"
+        },
+        {
+          "name": "Seasonal allergic rhinitis",
+          "clinicalStatus": "active",
+          "verificationStatus": "confirmed",
+          "onset": "1975-05-24",
+          "snomedCode": "367498001"
+        }
+      ]
+    },
+    "get_allergies": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 6,
+      "moreAvailable": false,
+      "items": [
+        {
+          "substance": "Allergy to mould",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to peanuts",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to nut",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to tree pollen",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to bee venom",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        },
+        {
+          "substance": "Allergy to soya",
+          "clinicalStatus": "active",
+          "criticality": "low",
+          "reactions": [],
+          "recorded": "1972-03-23"
+        }
+      ]
+    },
+    "get_observations category=laboratory latestOnly=true": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 15,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Erythrocyte distribution width [Entitic volume] by Automated count",
+          "date": "2020-02-25",
+          "value": "41.8 fL",
+          "category": "laboratory",
+          "loincCode": "21000-5"
+        },
+        {
+          "name": "Erythrocytes [#/volume] in Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "5.497 10*6/uL",
+          "category": "laboratory",
+          "loincCode": "789-8"
+        },
+        {
+          "name": "Hematocrit [Volume Fraction] of Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "38.82 %",
+          "category": "laboratory",
+          "loincCode": "4544-3"
+        },
+        {
+          "name": "Hemoglobin [Mass/volume] in Blood",
+          "date": "2020-02-25",
+          "value": "15.29 g/dL",
+          "category": "laboratory",
+          "loincCode": "718-7"
+        },
+        {
+          "name": "High Density Lipoprotein Cholesterol",
+          "date": "2020-02-25",
+          "value": "72.9 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2085-9"
+        },
+        {
+          "name": "Leukocytes [#/volume] in Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "4.556 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "6690-2"
+        },
+        {
+          "name": "Low Density Lipoprotein Cholesterol",
+          "date": "2020-02-25",
+          "value": "89.26 mg/dL",
+          "category": "laboratory",
+          "loincCode": "18262-6"
+        },
+        {
+          "name": "MCH [Entitic mass] by Automated count",
+          "date": "2020-02-25",
+          "value": "32.1 pg",
+          "category": "laboratory",
+          "loincCode": "785-6"
+        },
+        {
+          "name": "MCHC [Mass/volume] by Automated count",
+          "date": "2020-02-25",
+          "value": "33.34 g/dL",
+          "category": "laboratory",
+          "loincCode": "786-4"
+        },
+        {
+          "name": "MCV [Entitic volume] by Automated count",
+          "date": "2020-02-25",
+          "value": "89.81 fL",
+          "category": "laboratory",
+          "loincCode": "787-2"
+        },
+        {
+          "name": "Platelet distribution width [Entitic volume] in Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "218.8 fL",
+          "category": "laboratory",
+          "loincCode": "32207-3"
+        },
+        {
+          "name": "Platelet mean volume [Entitic volume] in Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "12.12 fL",
+          "category": "laboratory",
+          "loincCode": "32623-1"
+        },
+        {
+          "name": "Platelets [#/volume] in Blood by Automated count",
+          "date": "2020-02-25",
+          "value": "251.7 10*3/uL",
+          "category": "laboratory",
+          "loincCode": "777-3"
+        },
+        {
+          "name": "Total Cholesterol",
+          "date": "2020-02-25",
+          "value": "187.2 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2093-3"
+        },
+        {
+          "name": "Triglycerides",
+          "date": "2020-02-25",
+          "value": "125.3 mg/dL",
+          "category": "laboratory",
+          "loincCode": "2571-8"
+        }
+      ]
+    },
+    "get_observations category=vital-signs latestOnly=true": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 5,
+      "moreAvailable": false,
+      "items": [
+        {
+          "name": "Blood Pressure",
+          "date": "2020-02-25",
+          "value": "Diastolic Blood Pressure: 77.37 mm[Hg]; Systolic Blood Pressure: 112.3 mm[Hg]",
+          "category": "vital-signs",
+          "loincCode": "55284-4"
+        },
+        {
+          "name": "Body Height",
+          "date": "2020-02-25",
+          "value": "168.2 cm",
+          "category": "vital-signs",
+          "loincCode": "8302-2"
+        },
+        {
+          "name": "Body Mass Index",
+          "date": "2020-02-25",
+          "value": "30.38 kg/m2",
+          "category": "vital-signs",
+          "loincCode": "39156-5"
+        },
+        {
+          "name": "Body Weight",
+          "date": "2020-02-25",
+          "value": "85.96 kg",
+          "category": "vital-signs",
+          "loincCode": "29463-7"
+        },
+        {
+          "name": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+          "date": "2020-02-25",
+          "value": "3.304 {score}",
+          "category": "vital-signs",
+          "loincCode": "72514-3"
+        }
+      ]
+    },
+    "get_observations text=a1c": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 0,
+      "moreAvailable": false,
+      "note": "No matching observations. Try a broader name, no category, or no date.",
+      "items": []
+    },
+    "get_encounters": {
+      "patientId": "f341c771-5aff-4858-9406-9d45e8a56246",
+      "count": 28,
+      "moreAvailable": false,
+      "items": [
+        {
+          "start": "2021-01-31",
+          "end": "2021-01-31",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2021-01-30",
+          "end": "2021-01-30",
+          "setting": "emergency",
+          "type": "Emergency hospital admission for asthma",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2021-01-03",
+          "end": "2021-01-03",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-02-25",
+          "end": "2020-02-25",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2020-01-09",
+          "end": "2020-01-09",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2019-04-09",
+          "end": "2019-04-09",
+          "setting": "ambulatory",
+          "type": "Patient encounter procedure",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2019-01-14",
+          "end": "2019-01-14",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2018-08-14",
+          "end": "2018-08-14",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2018-02-20",
+          "end": "2018-02-20",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2017-01-24",
+          "end": "2017-01-24",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2016-08-24",
+          "end": "2016-08-24",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2016-02-16",
+          "end": "2016-02-16",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2015-08-30",
+          "end": "2015-08-30",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2015-08-29",
+          "end": "2015-08-29",
+          "setting": "emergency",
+          "type": "Emergency hospital admission for asthma",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2015-05-07",
+          "end": "2015-06-20",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Escherichia coli urinary tract infection"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2015-04-07",
+          "end": "2015-04-07",
+          "setting": "ambulatory",
+          "type": "Patient encounter procedure",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2015-03-02",
+          "end": "2015-03-02",
+          "setting": "ambulatory",
+          "type": "Asthma follow-up",
+          "reasons": [
+            "Asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2014-02-11",
+          "end": "2014-02-11",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2013-02-14",
+          "end": "2013-02-14",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2012-02-20",
+          "end": "2012-02-20",
+          "setting": "ambulatory",
+          "type": "Consultation for treatment",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "2012-02-07",
+          "end": "2012-02-07",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Viral sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "2012-02-07",
+          "end": "2012-02-07",
+          "setting": "ambulatory",
+          "type": "Encounter for check up (procedure)",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1999-03-17",
+          "end": "1999-03-17",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [
+            "Anemia (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1988-09-14",
+          "end": "1988-09-14",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Acute bacterial sinusitis (disorder)"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1975-05-24",
+          "end": "1975-06-07",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Seasonal allergic rhinitis"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1974-05-24",
+          "end": "1974-05-24",
+          "setting": "ambulatory",
+          "type": "Encounter for symptom",
+          "reasons": [
+            "Childhood asthma"
+          ],
+          "status": "finished"
+        },
+        {
+          "start": "1972-03-23",
+          "end": "1972-03-23",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        },
+        {
+          "start": "1972-03-14",
+          "end": "1972-03-14",
+          "setting": "ambulatory",
+          "type": "Encounter for problem",
+          "reasons": [],
+          "status": "finished"
+        }
+      ]
+    }
+  }
+}

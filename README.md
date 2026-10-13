@@ -24,6 +24,7 @@ This project addresses both: name and lab search are done on our side, with tran
 | Patient summary, medications, conditions, encounters, observations, allergies | Done |
 | Privacy and audit: tamper-evident audit log, de-identified mode, tool allowlist | Done |
 | SMART on FHIR sign-in: PKCE, token refresh, read-only scopes, patient limit | Done |
+| Model evaluation: 50 graded clinical questions, Claude and local MedGemma, full and de-identified | Built; first results pending |
 
 ## How it works
 
@@ -186,6 +187,28 @@ Remove any `FHIR_BASE_URL` line when you add `FHIR_MCP_SERVER`: with both set th
 
 Verified on macOS (Apple Silicon): browser sign-in, the Keychain key and encrypted token file, the one-patient limit in the terminal and in Claude Desktop, and de-identified mode on top of sign-in.
 
+## Evaluation
+
+The tests prove the tools return the right data. The evaluation measures whether a model reading that data answers correctly, so model, prompt and privacy choices can be made with numbers. It compares Claude with Google's [MedGemma](https://developers.google.com/health-ai-developer-foundations/medgemma), a medical model that runs locally, so patient data never leaves the machine. The design and its limits are in [decision 0008](docs/decisions/0008-model-evaluation.md).
+
+- **50 questions about 5 synthetic patients** ([eval/questions.json](eval/questions.json)), across medications, allergies, conditions, labs, vital signs, visits, history and data that is not on file. Each expected answer was checked against the record, and a test proves that a correct reference answer passes every question.
+- **Weighted by harm.** Medication and allergy questions count three times and are reported as critical misses. Any answer that names a medication not in the patient's record fails.
+- **Two modes.** *Answer*: the patient's chart, frozen in [eval/context](eval/context), is in the prompt, which measures reading and makes runs repeatable. *Fetch*: the model gets only the question and calls this server's tools over MCP itself.
+- **Both privacy modes.** De-identified runs use the server's own de-identification, so the report shows what Safe Harbor costs in accuracy (full dates are the expected casualty).
+- **Graded by rules, not another model.** Required words, forbidden words, numbers within a tolerance, and yes or no first. Every failure is listed with the answer so a person can check the grading.
+
+Run it (Claude needs `ANTHROPIC_API_KEY`; local models need [Ollama](https://ollama.com)):
+
+```bash
+ollama pull medgemma:27b && ollama pull medgemma1.5:4b
+dotnet build
+dotnet run --project src/FhirMcp.Eval -- run                          # Claude, MedGemma 27B and 4B; answer mode; full and de-identified
+dotnet run --project src/FhirMcp.Eval -- run --models claude --modes fetch --privacy full
+dotnet run --project src/FhirMcp.Eval -- run --models medgemma:27b --only reyna-active-meds,adolph-seizure-med
+```
+
+Each run writes `eval/results/<time>/report.md` (scoreboard, scores by category, every failure) and `results.jsonl` (every answer, tool call, timing and token count).
+
 ## Getting started
 
 Requires the .NET 10 SDK.
@@ -302,7 +325,9 @@ Questions to try in Claude: "Find Reyna Ziemann and summarize her health." "Do h
 ```
 src/FhirMcp.Core      FHIR client, name matching, mapping, privacy and audit, SMART sign-in (no dependencies)
 src/FhirMcp.Server    MCP server over stdio, policy filters, plus search, servers, audit-verify, login, logout and auth-status commands
+src/FhirMcp.Eval      Model evaluation: question runner, Claude and Ollama clients, grader, report
 tests/FhirMcp.Tests   xUnit tests with synthetic FHIR fixtures
+eval                  Evaluation questions, frozen patient charts, and results
 docs/decisions        Architecture decision records: why the code is shaped this way
 ```
 
@@ -313,7 +338,7 @@ The main decisions, with the options considered and their costs, are written up 
 - **No dependencies in the core library.** The FHIR client uses `HttpClient` and `System.Text.Json` and reads only the fields it needs, which keeps the output shaping explicit and easy to test.
 - **Read-only, bounded queries.** Every search requires real criteria and caps its results (50 at most), so a tool call can never page through a whole server.
 - **Honest data.** Partial birth dates (`1955`) are not turned into exact ages, deceased patients get no current age, and looser matches are labeled as such.
-- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 161 tests cover mapping, name and test matching, request shape, limits, errors, the JSON each tool returns, de-identification, the audit log's hash chain, server selection, and sign-in (PKCE, discovery, token exchange and refresh, retry after 401, token storage, the patient limit) against a fake authorization server.
+- **Testable without a network.** Tests run against synthetic FHIR responses through a fake HTTP handler, and the clock is injected through `TimeProvider`. 191 tests cover mapping, name and test matching, request shape, limits, errors, the JSON each tool returns, de-identification, the audit log's hash chain, server selection, and sign-in (PKCE, discovery, token exchange and refresh, retry after 401, token storage, the patient limit) against a fake authorization server, plus the evaluation's grader, model clients and report.
 
 ## Security notes
 

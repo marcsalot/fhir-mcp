@@ -10,7 +10,7 @@ A read-only MCP server in C# (.NET 10) that lets Claude answer questions about p
 
 ## Status
 
-The code is complete and tested: 7 tools, a privacy and audit layer, optional SMART on FHIR sign-in, 161 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. It is published at github.com/marcsalot/fhir-mcp and connected to Claude Desktop on the owner's Mac. Remaining work is the demo video (see What's next).
+The code is complete and tested: 7 tools, a privacy and audit layer, optional SMART on FHIR sign-in, an evaluation of model answers (Claude and local MedGemma), 191 passing tests, every tool verified live through the MCP protocol. It builds and runs on the owner's Mac (.NET 10), and MCP Inspector has been verified there. It is published at github.com/marcsalot/fhir-mcp and connected to Claude Desktop on the owner's Mac. Remaining work is the demo video (see What's next).
 
 ## Layout
 
@@ -18,6 +18,7 @@ The code is complete and tested: 7 tools, a privacy and audit layer, optional SM
 - `src/FhirMcp.Core/Privacy`: `PrivacyPolicy` (env var settings), `Deidentifier` (Safe Harbor rules on response JSON), `AuditLog` (hash-chained JSONL).
 - `src/FhirMcp.Core/Auth`: `SmartSettings` (env vars, read-only scope check), `SmartAuthClient` (discovery, PKCE, code exchange, refresh), `SmartTokens`, `SmartSession` (current tokens, renewal, patient limit) and `BearerTokenHandler`, token stores (`FileTokenStore`; `KeychainTokenStore` = AES-GCM file with its key in the macOS Keychain via `/usr/bin/security`). `Fhir/AccessScope.cs` holds `IAccessScope` and `PatientAccessDeniedException`.
 - `src/FhirMcp.Server`: MCP host over stdio (ModelContextProtocol 2.2.0) plus `search`, `servers`, `audit-verify`, `login`, `logout` and `auth-status` commands (`AuthCommands.cs`). `Core/Fhir/FhirServers.cs` holds the server presets: `FHIR_MCP_SERVER` = `smart` | `hapi` | `smart-login` (the last turns sign-in on with a patient scope unless `FHIR_MCP_AUTH` / `FHIR_MCP_SMART_SCOPE` say otherwise); `FHIR_BASE_URL` for any other server; both set is a startup error. `PolicyFilters` enforces the allowlist and writes audit records around every tool call; `ToolOutput` applies the privacy mode to every response. Tools live in `Tools/`; every tool returns JSON text built by `ToolSerializer` (camelCase, nulls omitted, non-ASCII left readable).
+- `src/FhirMcp.Eval`: model evaluation (decision 0008). `Questions.cs` and `eval/questions.json` (50 questions, each with grading rules and a reference answer), `Grader.cs` (rule-based; `DrugVocabulary` flags invented medications unless only in a negative sentence), `Agents.cs` (`ClaudeAgent` on the Messages API with native tools; `OllamaAgent` with `TextToolProtocol`: JSON object to call a tool, `ANSWER:` to finish), `McpTools.cs` (fetch mode starts the built server over MCP with `FHIR_MCP_SERVER=smart`, no auth, audit off), `Runner.cs`, `Report.cs`, `Snapshot.cs` (`snapshot` command refreezes `eval/context`). Results go to `eval/results/<time>/`.
 - `tests/FhirMcp.Tests`: xUnit, no network. `FakeHandler` answers by URL and records requests; `FixedTime` pins the clock.
 
 ## Tools (all read-only)
@@ -61,11 +62,12 @@ Requires the .NET 10 SDK (on Apple Silicon Macs, the Arm64 installer).
 
 ```bash
 dotnet build
-dotnet test                       # expect 161 passing
+dotnet test                       # expect 191 passing
 dotnet run --project src/FhirMcp.Server -- search --name "reyna ziemann"
 FHIR_MCP_SERVER=hapi dotnet run --project src/FhirMcp.Server -- search --name sayed
 dotnet run --project src/FhirMcp.Server -- servers   # smart (default), hapi, smart-login; FHIR_BASE_URL for anything else
 npx @modelcontextprotocol/inspector ./src/FhirMcp.Server/bin/Debug/net10.0/FhirMcp.Server
+dotnet run --project src/FhirMcp.Eval -- run --models claude --only reyna-active-meds   # needs ANTHROPIC_API_KEY
 ```
 
 Running the server with no arguments looks like it hangs: it is waiting for an MCP client on stdin. Ctrl+C stops it.
@@ -78,7 +80,8 @@ For Claude Desktop (Settings > Developer > Edit Config), point `command` at the 
 2. Record a short demo video of one question being answered in Claude Desktop and add it to the README.
 3. Try de-identified mode in Claude Desktop (add `"FHIR_MCP_PRIVACY": "deidentified"` to the server's env) and confirm answers still make sense with year-only dates.
 4. Done: SMART sign-in verified on the Mac (October 11, 2026): login through the browser, the Keychain key created (`security find-generic-password -s fhir-mcp -a token-encryption-key`), tokens saved encrypted in `~/.fhir-mcp/tokens.enc`, and the one-patient limit applied to search. Next: try `smart-login` in Claude Desktop.
-5. Stretch: remote HTTP hosting on Azure Container Apps (with MCP's own authorization replacing the terminal sign-in), an MCP prompt that assembles a visit summary. Write a decision record for each.
+5. Run the evaluation on the Mac (Ollama with medgemma:27b and medgemma1.5:4b, plus ANTHROPIC_API_KEY), review every failure in the report for grading mistakes, then commit the report and add its headline numbers to the README. Not yet run against real models: the runner was tested with fakes and a fake Ollama server only.
+6. Stretch: remote HTTP hosting on Azure Container Apps (with MCP's own authorization replacing the terminal sign-in), an MCP prompt that assembles a visit summary. Write a decision record for each.
 
 ## Conventions
 
