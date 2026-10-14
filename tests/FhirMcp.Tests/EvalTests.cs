@@ -244,7 +244,7 @@ public class AgentTests
 
         Assert.All(server.Requests, r => Assert.Equal("api.anthropic.com", r.Url.Host));
         var last = JsonNode.Parse(server.Requests[^1].Body)!;
-        Assert.Equal(0, last["temperature"]!.GetValue<int>());
+        Assert.False(last.AsObject().ContainsKey("temperature"));
         Assert.Equal(2, last["tools"]!.AsArray().Count);
         var toolResult = last["messages"]!.AsArray()[^1]!["content"]![0]!;
         Assert.Equal("tool_result", toolResult["type"]!.GetValue<string>());

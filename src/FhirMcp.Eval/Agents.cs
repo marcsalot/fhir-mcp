@@ -85,7 +85,6 @@ public sealed class ClaudeAgent : IAgent
             {
                 ["model"] = _model,
                 ["max_tokens"] = 1024,
-                ["temperature"] = 0,
                 ["system"] = system,
                 ["messages"] = messages.DeepClone(),
             };
@@ -161,6 +160,11 @@ public sealed class ClaudeAgent : IAgent
             };
             request.Headers.Add("x-api-key", _apiKey);
             request.Headers.Add("anthropic-version", "2023-06-01");
+            var workspaceId = Environment.GetEnvironmentVariable("ANTHROPIC_WORKSPACE_ID");
+            if (!string.IsNullOrWhiteSpace(workspaceId))
+            {
+                request.Headers.Add("anthropic-workspace-id", workspaceId);
+            }
 
             using var response = await _http.SendAsync(request, cancellationToken);
             var text = await response.Content.ReadAsStringAsync(cancellationToken);
