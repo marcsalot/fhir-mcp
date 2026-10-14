@@ -24,7 +24,7 @@ This project addresses both: name and lab search are done on our side, with tran
 | Patient summary, medications, conditions, encounters, observations, allergies | Done |
 | Privacy and audit: tamper-evident audit log, de-identified mode, tool allowlist | Done |
 | SMART on FHIR sign-in: PKCE, token refresh, read-only scopes, patient limit | Done |
-| Model evaluation: 50 graded clinical questions, Claude and local MedGemma, full and de-identified | Built; first results pending |
+| Model evaluation: 50 graded clinical questions, Claude and local MedGemma, full and de-identified | Done (claude-sonnet-5-5: 96.9% full / 95.8% de-identified; medgemma:27b: 91.7% / 64.6%; medgemma1.5:4b: 80.2% / 75.0%) |
 
 ## How it works
 
@@ -211,12 +211,23 @@ Each run writes `eval/results/<time>/report.md` (scoreboard, scores by category,
 
 ## Getting started
 
-Requires the .NET 10 SDK.
+### Prerequisites
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) -- on Apple Silicon Macs, use the Arm64 installer.
+- (Optional) [Claude Desktop](https://claude.ai/download) or [Claude Code](https://claude.ai/code) to connect an AI client.
+
+### Clone, build, and test
 
 ```bash
+git clone https://github.com/marcsalot/fhir-mcp.git
+cd fhir-mcp
 dotnet build
-dotnet test
+dotnet test         # expect 191 tests to pass
 ```
+
+### Try a search from the command line
+
+The server defaults to the SMART Health IT R4 sandbox. No account or API key is needed.
 
 Try a search from the command line (defaults to the SMART Health IT R4 sandbox):
 
