@@ -23,6 +23,12 @@ public sealed record Grading(
 /// <param name="Patient">The context file in eval/context that holds this patient's record.</param>
 /// <param name="Critical">Medication and allergy questions: a miss counts three times and is listed as a critical miss.</param>
 /// <param name="Reference">A correct answer written from the record; a test checks that it passes the grading.</param>
+/// <param name="DeidentifiedGrading">
+/// Optional alternate grading rules used when privacy mode is de-identified.
+/// Use this for questions whose correct answer changes under Safe Harbor redaction
+/// (e.g., date questions where only the year is available, not the specific date).
+/// When absent, the standard Grading applies in all privacy modes.
+/// </param>
 public sealed record Question(
     string Id,
     string Patient,
@@ -31,9 +37,16 @@ public sealed record Question(
     string Category,
     bool Critical,
     Grading Grading,
+    Grading? DeidentifiedGrading = null,
     string? Reference = null)
 {
     public int Weight => Critical ? 3 : 1;
+
+    /// <summary>Returns the grading rules appropriate for the given privacy mode.</summary>
+    public Grading GradingFor(FhirMcp.Core.Privacy.PrivacyMode privacy) =>
+        privacy == FhirMcp.Core.Privacy.PrivacyMode.Deidentified && DeidentifiedGrading is not null
+            ? DeidentifiedGrading
+            : Grading;
 }
 
 public static class QuestionSet
@@ -49,7 +62,8 @@ public static class QuestionSet
     private sealed record QuestionDto(
         string Id, string Patient, string PatientName,
         [property: JsonPropertyName("question")] string Text,
-        string Category, bool Critical, Grading Grading, string? Reference);
+        string Category, bool Critical, Grading Grading,
+        Grading? DeidentifiedGrading, string? Reference);
 
     public static IReadOnlyList<Question> Parse(string json)
     {
@@ -57,7 +71,7 @@ public static class QuestionSet
             ?? throw new InvalidDataException("The questions file is empty.");
 
         var questions = file.Questions
-            .Select(q => new Question(q.Id, q.Patient, q.PatientName, q.Text, q.Category, q.Critical, q.Grading, q.Reference))
+            .Select(q => new Question(q.Id, q.Patient, q.PatientName, q.Text, q.Category, q.Critical, q.Grading, q.DeidentifiedGrading, q.Reference))
             .ToList();
 
         var duplicate = questions.GroupBy(q => q.Id).FirstOrDefault(g => g.Count() > 1);

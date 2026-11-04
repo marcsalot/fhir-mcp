@@ -284,7 +284,17 @@
           ]
         ]
       },
-      "reference": "Her most recent visit was on 2020-05-27, an ambulatory asthma follow-up."
+      "reference": "Her most recent visit was on 2020-05-27, an ambulatory asthma follow-up.",
+      "deidentifiedGrading": {
+        "all": [
+          [
+            "2020"
+          ],
+          [
+            "asthma"
+          ]
+        ]
+      }
     },
     {
       "id": "reyna-sinusitis",
@@ -488,7 +498,14 @@
           ]
         ]
       },
-      "reference": "Her atopic dermatitis began on 2008-04-28."
+      "reference": "Her atopic dermatitis began on 2008-04-28.",
+      "deidentifiedGrading": {
+        "all": [
+          [
+            "2008"
+          ]
+        ]
+      }
     },
     {
       "id": "ima-migraine",
@@ -796,7 +813,17 @@
           ]
         ]
       },
-      "reference": "Her most recent visit was on 2021-01-31, an asthma follow-up."
+      "reference": "Her most recent visit was on 2021-01-31, an asthma follow-up.",
+      "deidentifiedGrading": {
+        "all": [
+          [
+            "2021"
+          ],
+          [
+            "asthma"
+          ]
+        ]
+      }
     },
     {
       "id": "jill-diabetes",
@@ -957,7 +984,14 @@
           ]
         ]
       },
-      "reference": "His most recent visit was a check-up on 2021-01-20."
+      "reference": "His most recent visit was a check-up on 2021-01-20.",
+      "deidentifiedGrading": {
+        "all": [
+          [
+            "2021"
+          ]
+        ]
+      }
     }
   ]
 }

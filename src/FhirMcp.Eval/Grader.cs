@@ -15,11 +15,12 @@ public sealed record Verdict(bool Passed, IReadOnlyList<string> Problems, IReadO
 /// </summary>
 public static partial class Grader
 {
-    public static Verdict Grade(Question question, string answer, string patientMedicationText)
+    public static Verdict Grade(Question question, string answer, string patientMedicationText,
+        FhirMcp.Core.Privacy.PrivacyMode privacy = FhirMcp.Core.Privacy.PrivacyMode.Full)
     {
         var text = Normalize(answer);
         var problems = new List<string>();
-        var g = question.Grading;
+        var g = question.GradingFor(privacy);
 
         if (g.StartsWith is { } expected)
         {

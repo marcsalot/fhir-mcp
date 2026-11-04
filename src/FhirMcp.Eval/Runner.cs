@@ -215,7 +215,7 @@ public sealed class Runner
             : await agent.RunAsync(systemPrompt + " " + Prompts.FetchAddition, question.Text, tools, cancellationToken);
 
         var verdict = result.Error is null
-            ? Grader.Grade(question, result.Answer, chart.MedicationText)
+            ? Grader.Grade(question, result.Answer, chart.MedicationText, privacy)
             : new Verdict(false, [$"no answer: {result.Error}"], []);
 
         return new QuestionResult(
