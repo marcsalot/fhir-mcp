@@ -87,8 +87,25 @@ public static class Prompts
         "If the question can be answered yes or no, begin your answer with Yes or No. " +
         "Keep the answer to two or three sentences, and give numbers with their units and dates as recorded.";
 
+    /// <summary>
+    /// Added to the system prompt when the chart has been de-identified.
+    /// Without this, models anchor on name redaction and refuse to answer or give the wrong Yes/No.
+    /// </summary>
+    public const string DeidentifiedAddition =
+        "This record has been de-identified per HIPAA Safe Harbor: patient names appear as '[redacted]', " +
+        "specific dates are replaced with the year only, and ages over 89 are shown as '90 or older'. " +
+        "Despite these redactions, treat the record as belonging to the patient named in the question. " +
+        "Do not refuse to answer or change your Yes/No response because a name or date is redacted — " +
+        "answer the clinical question directly from the data that is present. " +
+        "For date questions where only the year is available, give the year.";
+
     public const string FetchAddition =
         "Use the tools to find the patient by name and read the parts of the record you need before answering.";
+
+    public static string SystemFor(PrivacyMode privacy) =>
+        privacy == PrivacyMode.Deidentified
+            ? System + " " + DeidentifiedAddition
+            : System;
 
     public static string AnswerPrompt(string chart, string question) =>
         $"Here is the patient's record, as returned by the FHIR server's tools:\n\n{chart}\nQuestion: {question}";
@@ -192,9 +209,10 @@ public sealed class Runner
     {
         var chart = _charts[question.Patient];
         var clock = Stopwatch.StartNew();
+        var systemPrompt = Prompts.SystemFor(privacy);
         var result = mode == EvalMode.Answer
-            ? await agent.RunAsync(Prompts.System, Prompts.AnswerPrompt(chart.Render(privacy), question.Text), null, cancellationToken)
-            : await agent.RunAsync(Prompts.System + " " + Prompts.FetchAddition, question.Text, tools, cancellationToken);
+            ? await agent.RunAsync(systemPrompt, Prompts.AnswerPrompt(chart.Render(privacy), question.Text), null, cancellationToken)
+            : await agent.RunAsync(systemPrompt + " " + Prompts.FetchAddition, question.Text, tools, cancellationToken);
 
         var verdict = result.Error is null
             ? Grader.Grade(question, result.Answer, chart.MedicationText)
