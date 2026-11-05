@@ -85,6 +85,18 @@ table.cmp tr:last-child td{border:none}
 table.cmp td:first-child{font-family:var(--mono);font-size:12px;color:var(--muted)}
 .x{color:var(--red)}.ck{color:var(--green)}
 
+/* ── COMPRESSION PANELS ── */
+.compress-grid{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;align-items:start;margin-top:36px}
+@media(max-width:780px){.compress-grid{grid-template-columns:1fr}.compress-arrow{flex-direction:row!important;justify-content:center;padding:12px 0!important}}
+.compress-col{display:flex;flex-direction:column}
+.compress-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--s2);border:1px solid var(--border);border-radius:9px 9px 0 0;border-bottom:none}
+.compress-sz{font-size:11px;color:var(--dim);font-family:var(--mono)}
+.compress-body{border-radius:0 0 9px 9px;border-top:none;max-height:400px;overflow-y:auto;white-space:pre-wrap;font-size:11px}
+.compress-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:48px;gap:4px}
+.compress-ratio{font-size:28px;font-weight:800;color:var(--green);letter-spacing:-.03em;line-height:1}
+.compress-ratio-label{font-size:11px;color:var(--muted);text-align:center}
+.jk{color:#93C5FD}.jv{color:#86EFAC}.jn{color:var(--amber)}
+
 /* ── DEMO ── */
 .demo-shell{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:860px;margin:0 auto}
 .demo-bar{background:var(--s2);padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -159,6 +171,7 @@ footer{border-top:1px solid var(--border);padding:36px 0}
   </a>
   <div class="nav-links">
     <a href="#demo">Demo</a>
+    <a href="#compression">Compression</a>
     <a href="#how">How it works</a>
     <a href="#benchmarks">Benchmarks</a>
     <a href="https://github.com/marcsalot/fhir-mcp" class="nav-gh" target="_blank">
@@ -216,6 +229,131 @@ footer{border-top:1px solid var(--border);padding:36px 0}
     </table>
   </div>
 </div>
+</div>
+</section>
+
+<hr>
+
+<!-- COMPRESSION -->
+<section id="compression">
+<div class="wrap">
+  <div class="sec-label center">Compression</div>
+  <h2 class="center" style="margin-bottom:10px">The same information &mdash; 50 times smaller.</h2>
+  <p class="center lead" style="margin:0 auto 36px">A patient summary makes six parallel FHIR calls returning 117 KB of JSON: coding systems, boilerplate, extensions. The server maps it to 2.2 KB &mdash; only the fields a clinician would look at.</p>
+
+  <div class="compress-grid">
+
+    <div class="compress-col">
+      <div class="compress-hdr">
+        <span class="tag tag-r">Raw FHIR &mdash; conditions bundle</span>
+        <span class="compress-sz">1 of 6 calls &bull; ~12 KB</span>
+      </div>
+      <div class="code compress-body"><span class="jk">"resourceType"</span>: <span class="jv">"Bundle"</span>,
+<span class="jk">"type"</span>: <span class="jv">"searchset"</span>,
+<span class="jk">"total"</span>: <span class="jn">6</span>,
+<span class="jk">"link"</span>: [{
+  <span class="jk">"relation"</span>: <span class="jv">"self"</span>,
+  <span class="jk">"url"</span>: <span class="jv">"https://r4.smarthealthit.org/Condition
+     ?patient=76d2fa2d-..."</span>
+}],
+<span class="jk">"entry"</span>: [{
+  <span class="jk">"fullUrl"</span>: <span class="jv">"https://r4.smarthealthit.org/
+     Condition/7f3a1b2c-..."</span>,
+  <span class="jk">"resource"</span>: {
+    <span class="jk">"resourceType"</span>: <span class="jv">"Condition"</span>,
+    <span class="jk">"id"</span>: <span class="jv">"7f3a1b2c-66a6-..."</span>,
+    <span class="jk">"meta"</span>: {
+      <span class="jk">"versionId"</span>: <span class="jv">"1"</span>,
+      <span class="jk">"lastUpdated"</span>: <span class="jv">"2001-01-01T00:00:00+00:00"</span>,
+      <span class="jk">"source"</span>: <span class="jv">"#src"</span>
+    },
+    <span class="jk">"clinicalStatus"</span>: {
+      <span class="jk">"coding"</span>: [{
+        <span class="jk">"system"</span>: <span class="jv">"http://terminology.hl7.org/
+          CodeSystem/condition-clinical"</span>,
+        <span class="jk">"version"</span>: <span class="jv">"4.0.0"</span>,
+        <span class="jk">"code"</span>: <span class="jv">"active"</span>,
+        <span class="jk">"display"</span>: <span class="jv">"Active"</span>
+      }]
+    },
+    <span class="jk">"verificationStatus"</span>: {
+      <span class="jk">"coding"</span>: [{
+        <span class="jk">"system"</span>: <span class="jv">"http://terminology.hl7.org/
+          CodeSystem/condition-ver-status"</span>,
+        <span class="jk">"code"</span>: <span class="jv">"confirmed"</span>
+      }]
+    },
+    <span class="jk">"category"</span>: [{
+      <span class="jk">"coding"</span>: [{
+        <span class="jk">"system"</span>: <span class="jv">"http://terminology.hl7.org/
+          CodeSystem/condition-category"</span>,
+        <span class="jk">"code"</span>: <span class="jv">"encounter-diagnosis"</span>
+      }]
+    }],
+    <span class="jk">"code"</span>: {
+      <span class="jk">"coding"</span>: [{
+        <span class="jk">"system"</span>: <span class="jv">"http://snomed.info/sct"</span>,
+        <span class="jk">"code"</span>: <span class="jv">"59621000"</span>,
+        <span class="jk">"display"</span>: <span class="jv">"Essential hypertension (disorder)"</span>
+      }],
+      <span class="jk">"text"</span>: <span class="jv">"Essential hypertension"</span>
+    },
+    <span class="jk">"subject"</span>: {
+      <span class="jk">"reference"</span>: <span class="jv">"Patient/76d2fa2d-..."</span>
+    },
+    <span class="jk">"onsetDateTime"</span>: <span class="jv">"2001-01-01T00:00:00+00:00"</span>,
+    <span class="jk">"recordedDate"</span>: <span class="jv">"2001-01-01T00:00:00+00:00"</span>
+  }
+},
+<span class="c">// ... 5 more entries omitted</span>
+]</div>
+    </div>
+
+    <div class="compress-arrow">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color:var(--green)"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div class="compress-ratio">53&times;</div>
+      <div class="compress-ratio-label">smaller</div>
+    </div>
+
+    <div class="compress-col">
+      <div class="compress-hdr">
+        <span class="tag tag-g">Compact output &mdash; all 6 calls merged</span>
+        <span class="compress-sz">2.2 KB total</span>
+      </div>
+      <div class="code compress-body">{
+  <span class="jk">"id"</span>: <span class="jv">"76d2fa2d-..."</span>,
+  <span class="jk">"name"</span>: <span class="jv">"Reyna Ziemann"</span>,
+  <span class="jk">"dob"</span>: <span class="jv">"1974-07-04"</span>, <span class="jk">"age"</span>: <span class="jn">52</span>,
+  <span class="jk">"gender"</span>: <span class="jv">"female"</span>,
+  <span class="jk">"conditions"</span>: [
+    { <span class="jk">"name"</span>: <span class="jv">"Essential hypertension"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"onset"</span>: <span class="jv">"2001-01-01"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Prediabetes"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"onset"</span>: <span class="jv">"2014-01-01"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Obesity (BMI 30+)"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"onset"</span>: <span class="jv">"2001-01-01"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Chronic sinusitis"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"onset"</span>: <span class="jv">"2016-01-01"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Allergic rhinitis"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"onset"</span>: <span class="jv">"2016-01-01"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Cardiac arrest"</span>, <span class="jk">"status"</span>: <span class="jv">"resolved"</span> }
+  ],
+  <span class="jk">"medications"</span>: [
+    { <span class="jk">"name"</span>: <span class="jv">"Hydrochlorothiazide 25mg"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"reason"</span>: <span class="jv">"Hypertension"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Ferrous sulfate 325mg"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Fluticasone inhaler"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span>, <span class="jk">"reason"</span>: <span class="jv">"Rhinitis"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Albuterol inhaler"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span> },
+    { <span class="jk">"name"</span>: <span class="jv">"Diphenhydramine 25mg"</span>, <span class="jk">"status"</span>: <span class="jv">"active"</span> }
+  ],
+  <span class="jk">"allergies"</span>: [
+    { <span class="jk">"substance"</span>: <span class="jv">"Aspirin"</span>, <span class="jk">"criticality"</span>: <span class="jv">"high"</span>, <span class="jk">"reaction"</span>: <span class="jv">"Anaphylaxis"</span> },
+    <span class="c">// ... 9 more</span>
+  ],
+  <span class="jk">"vitals"</span>: {
+    <span class="jk">"bp"</span>: <span class="jv">"132/80 mmHg"</span>,
+    <span class="jk">"bmi"</span>: <span class="jn">31.4</span>,
+    <span class="jk">"weight"</span>: <span class="jv">"91 kg"</span>
+  },
+  <span class="jk">"lastVisit"</span>: <span class="jv">"2020-05-27"</span>
+}</div>
+    </div>
+
+  </div>
 </div>
 </section>
 
