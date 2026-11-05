@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FHIR MCP Server — Project Showcase</title>
+<meta name="description" content="A deep look at how FHIR MCP Server works: 50× compression, smart matching, clinical accuracy benchmarks, privacy controls, and SMART on FHIR sign-in.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06080D;
+  --card:#0D1118;
+  --card2:#111826;
+  --border:#1A2236;
+  --border2:#202E44;
+  --text:#DDE6F5;
+  --muted:#637089;
+  --dim:#2A3A52;
+  --blue:#5B9CF6;
+  --blue2:#3B7EF4;
+  --blue-g:linear-gradient(135deg,#4F8EF7,#7C5CF6);
+  --green:#2DD4A0;
+  --amber:#F59E0B;
+  --red:#F87171;
+  --mono:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;overflow-x:hidden}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:99;background:rgba(6,8,13,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-i{max-width:1080px;margin:0 auto;padding:0 24px;height:54px;display:flex;align-items:center;gap:0}
+.n-logo{font-weight:700;font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px;margin-right:auto}
+.n-logo svg{color:var(--blue)}
+.n-links{display:flex;align-items:center;gap:2px}
+.n-links a{padding:5px 11px;color:var(--muted);font-size:13px;border-radius:6px;transition:color .15s,background .15s}
+.n-links a:hover{color:var(--text);background:var(--card2);text-decoration:none}
+.n-cta{padding:7px 16px;background:var(--blue2);color:#fff!important;border-radius:7px;font-size:13px;font-weight:600;margin-left:10px;transition:filter .15s}
+.n-cta:hover{filter:brightness(1.1);text-decoration:none!important}
+
+/* LAYOUT */
+.w{max-width:1080px;margin:0 auto;padding:0 24px}
+.sec{padding:72px 0}
+hr{border:none;border-top:1px solid var(--border)}
+.lbl{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:11px}
+h2{font-size:clamp(22px,3vw,34px);font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
+.sub{font-size:15px;color:var(--muted);max-width:520px;line-height:1.75}
+.center{text-align:center}.center .sub{margin:0 auto}
+
+/* HERO */
+.hero{padding:96px 0 72px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 30% 50%,rgba(79,142,247,.07) 0%,transparent 70%),
+    radial-gradient(ellipse 60% 40% at 70% 50%,rgba(124,92,246,.07) 0%,transparent 70%);
+  pointer-events:none}
+.h-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;border:1px solid var(--border2);border-radius:20px;font-size:12px;color:var(--muted);margin-bottom:26px;background:var(--card)}
+.h-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-size:clamp(36px,6vw,62px);font-weight:800;line-height:1.08;letter-spacing:-.035em;margin-bottom:20px}
+h1 .g{background:var(--blue-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.h-desc{font-size:17px;color:var(--muted);max-width:560px;margin:0 auto 36px;line-height:1.75}
+.h-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:8px;font:600 14px 'Inter';text-decoration:none!important;border:none;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--blue2);color:#fff}.btn-p:hover{filter:brightness(1.1)}
+.btn-g{border:1px solid var(--border2);color:var(--text);background:var(--card)}.btn-g:hover{border-color:var(--blue);background:var(--card2)}
+
+/* KPI GRID */
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:64px}
+@media(max-width:680px){.kpi{grid-template-columns:repeat(2,1fr)}}
+.kpi-c{background:var(--card);padding:24px 18px;text-align:center}
+.kpi-n{font-size:36px;font-weight:800;letter-spacing:-.03em;background:var(--blue-g);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.kpi-l{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px}
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+@media(max-width:680px){.card-grid{grid-template-columns:1fr}}
+.card-icon{font-size:28px;margin-bottom:14px}
+.card h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.card p{font-size:13px;color:var(--muted);line-height:1.7}
+.card code{font-family:var(--mono);font-size:12px;background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--muted)}
+
+/* BEFORE / AFTER */
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:680px){.ba{grid-template-columns:1fr}}
+.ba-box{border-radius:10px;overflow:hidden}
+.ba-head{padding:11px 16px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.ba-bad .ba-head{background:rgba(248,113,113,.1);color:var(--red)}
+.ba-good .ba-head{background:rgba(45,212,160,.1);color:var(--green)}
+.ba-body{padding:14px 16px;background:var(--card);border:1px solid var(--border);border-top:none;font-size:13px;color:var(--muted);line-height:1.8}
+.ba-body .hi{color:var(--text);font-weight:500}
+
+/* FLOW */
+.flow{display:flex;align-items:flex-start;gap:0;position:relative}
+.flow::before{content:'';position:absolute;left:20px;top:40px;bottom:20px;width:1px;background:var(--border)}
+.flow-step{display:flex;gap:16px;padding-bottom:28px;position:relative}
+.flow-step:last-child{padding-bottom:0}
+.flow-num{width:40px;height:40px;border-radius:50%;background:var(--card2);border:1px solid var(--border2);color:var(--blue);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.flow-body h3{font-size:14px;font-weight:600;margin-bottom:4px;padding-top:9px}
+.flow-body p{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* BENCH */
+.b-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:12px}
+.b-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.b-name{font-weight:600;font-size:14px}
+.b-scores{display:flex;gap:16px}
+.b-s{font-size:13px;color:var(--muted)}.b-s b{font-weight:700}
+.bar{height:5px;background:var(--dim);border-radius:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px;width:0;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+.bar-ll{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--dim)}
+
+/* INSIGHT CARDS */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:680px){.insight-grid{grid-template-columns:1fr}}
+.insight{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.insight .num{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+.insight p{font-size:13px;color:var(--muted);line-height:1.65}
+
+/* CODE */
+.code{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:18px 20px;font:13px/1.9 var(--mono);overflow-x:auto}
+.cc{color:var(--dim)}.ccmd{color:var(--green)}.cstr{color:#93C5FD}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:32px 0}
+.f-i{max-width:1080px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.f-i p{font-size:13px;color:var(--muted)}
+.f-links{display:flex;gap:16px}
+.f-links a{font-size:13px;color:var(--muted)}.f-links a:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="nav-i">
+  <span class="n-logo">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    FHIR MCP Server
+  </span>
+  <div class="n-links">
+    <a href="#problem">Problem</a>
+    <a href="#how">How it works</a>
+    <a href="#eval">Evaluation</a>
+    <a href="index.html" class="n-cta">Live Demo →</a>
+  </div>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+<div class="w">
+  <div class="h-eyebrow"><span class="dot"></span>Open source · C# · .NET 10 · MIT</div>
+  <h1>Clinical AI without<br>the <span class="g">FHIR boilerplate</span></h1>
+  <p class="h-desc">An MCP server that sits between Claude and a FHIR R4 server — fixing the search limitations that make plain FHIR unusable with AI, and compressing responses by 50× before they reach the model.</p>
+  <div class="h-btns">
+    <a href="index.html" class="btn btn-p">Try the live demo</a>
+    <a href="https://github.com/marcsalot/fhir-mcp" class="btn btn-g" target="_blank">View source on GitHub</a>
+  </div>
+  <div class="kpi">
+    <div class="kpi-c"><div class="kpi-n">50×</div><div class="kpi-l">response compression</div></div>
+    <div class="kpi-c"><div class="kpi-n">96.9%</div><div class="kpi-l">clinical accuracy (Claude)</div></div>
+    <div class="kpi-c"><div class="kpi-n">191</div><div class="kpi-l">passing unit tests</div></div>
+    <div class="kpi-c"><div class="kpi-n">0</div><div class="kpi-l">invented medications</div></div>
+  </div>
+</div>
+</div>
+
+<!-- PROBLEM -->
+<section class="sec" id="problem">
+<div class="w">
+  <div class="lbl">The problem</div>
+  <h2>FHIR's defaults make it hard to use with AI</h2>
+  <p class="sub" style="margin-bottom:36px">These aren't bugs — they're how the standard works. But they make a model-facing API impractical without a middleware layer that handles them.</p>
+  <div class="ba">
+    <div class="ba-box ba-bad">
+      <div class="ba-head">Without this server</div>
+      <div class="ba-body">
+        <span class="hi">"Adolph Smith"</span> → 0 results (phrase doesn't match any single name value)<br>
+        <span class="hi">"Sayed"</span> → misses Al-Sayed (prefix search starts from "Al-")<br>
+        <span class="hi">"a1c"</span> → 0 lab results ("Hemoglobin A1c/Hemoglobin.total…" doesn't start with "a1c")<br>
+        Patient summary → <span class="hi">~200 KB</span> across 6 API calls
+      </div>
+    </div>
+    <div class="ba-box ba-good">
+      <div class="ba-head">With this server</div>
+      <div class="ba-body">
+        <span class="hi">"Adolph Smith"</span> → found (longest word as prefix, every word checked against all names)<br>
+        <span class="hi">"Sayed"</span> → Fatima Al-Sayed (name parts normalised, hyphens handled)<br>
+        <span class="hi">"a1c"</span> → 5 results (word-matching fallback scans recent observations)<br>
+        Patient summary → <span class="hi">2.2 KB</span>, parallel fetches
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr>
+
+<!-- HOW IT WORKS -->
+<section class="sec" id="how">
+<div class="w">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start">
+    <div>
+      <div class="lbl">Architecture</div>
+      <h2>How it works</h2>
+      <p class="sub" style="margin-bottom:36px">Every model question goes through three layers before FHIR data reaches Claude.</p>
+      <div class="flow">
+        <div>
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-body"><h3>Policy filters</h3><p>Enforce a tool allowlist, write a tamper-evident audit record for every call, and apply the privacy mode (full or HIPAA Safe Harbor de-identified).</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-body"><h3>Smart FHIR search</h3><p>Sends the longest typed word as a FHIR prefix search. Checks every result against all stored names — official, maiden, aliases — with hyphens, apostrophes, and accents normalised. Falls back to <code>:contains</code> if nothing matches.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-body"><h3>Compact summaries</h3><p>Flattens FHIR bundles to small JSON — only the fields a clinician would look at. 200 KB becomes 2.2 KB. Six searches run in parallel. The model receives a compact, readable record.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="lbl" style="margin-top:52px">Security &amp; compliance</div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h3>Read-only</h3>
+          <p>Only GET requests. Patient IDs are validated against the FHIR format before entering a URL — <code>../Patient</code> is rejected before a request is made.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h3>Audit log</h3>
+          <p>Every tool call writes a JSON line with time, tool, outcome, patient IDs, item count, and a SHA-256 hash of the previous line — edits are detectable.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔑</div>
+          <h3>SMART on FHIR</h3>
+          <p>PKCE sign-in, token refresh, one-patient limit. When scoped to a single patient, requests about anyone else are refused and audited as <code>denied</code>.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏥</div>
+          <h3>De-identified mode</h3>
+          <p>HIPAA Safe Harbor applied before data reaches the model: names removed, dates reduced to year, ages over 89 shown as "90 or older".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<hr>
+
+<!-- EVAL -->
+<section class="sec" id="eval">
+<div class="w">
+  <div class="lbl center">Model evaluation</div>
+  <h2 class="center">50 graded clinical questions</h2>
+  <p class="sub center" style="margin-bottom:40px">Medications, allergies, conditions, labs, vitals, visit history. Graded by deterministic rules — not another model — so the score is reproducible and every failure is listed for a person to review.</p>
+
+  <div id="benches">
+    <div class="b-row"><div class="b-top"><span class="b-name">claude-sonnet-5-5</span><div class="b-scores"><span class="b-s">Full: <b style="color:var(--green)">96.9%</b></span><span class="b-s">De-identified: <b style="color:var(--green)">95.8%</b></span></div></div><div class="bar"><div class="bf" data-w="96.9" style="background:var(--green)"></div></div><div class="bar-ll"><span>0%</span><span>100%</span></div></div>
+    <div class="b-row"><div class="b-top"><span class="b-name">MedGemma 27B — local via Ollama</span><div class="b-scores"><span class="b-s">Full: <b style="color:var(--blue)">92.0%</b></span><span class="b-s">De-identified: <b style="color:var(--amber)">74.0%</b></span></div></div><div class="bar"><div class="bf" data-w="92" style="background:var(--blue)"></div></div><div class="bar-ll"><span>0%</span><span>100%</span></div></div>
+    <div class="b-row"><div class="b-top"><span class="b-name">MedGemma 1.5B 4B — local via Ollama</span><div class="b-scores"><span class="b-s">Full: <b style="color:var(--amber)">80.2%</b></span><span class="b-s">De-identified: <b style="color:var(--amber)">75.0%</b></span></div></div><div class="bar"><div class="bf" data-w="80.2" style="background:var(--amber)"></div></div><div class="bar-ll"><span>0%</span><span>100%</span></div></div>
+  </div>
+
+  <div class="insight-grid" style="margin-top:28px">
+    <div class="insight">
+      <div class="num" style="color:var(--green)">+10pp</div>
+      <p>De-identified accuracy improvement from adding a privacy-aware system prompt that tells the model to treat the redacted chart as belonging to the named patient.</p>
+    </div>
+    <div class="insight">
+      <div class="num" style="color:var(--blue)">0</div>
+      <p>Invented medications across all models, all runs, full and de-identified. The hallucination check compares answers against the patient's complete medication history.</p>
+    </div>
+    <div class="insight">
+      <div class="num" style="color:var(--amber)">4</div>
+      <p>Questions correctly identified as unanswerable in de-identified mode — specific dates are stripped by Safe Harbor, so the grader now accepts year-only answers for those questions.</p>
+    </div>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:16px;text-align:center">MedGemma runs entirely on-device via Ollama. No patient data leaves the machine during evaluation.</p>
+</div>
+</section>
+
+<hr>
+
+<!-- GET STARTED -->
+<section class="sec">
+<div class="w">
+  <div class="lbl center">Get started</div>
+  <h2 class="center" style="margin-bottom:36px">Clone, build, ask</h2>
+  <div style="max-width:600px;margin:0 auto">
+    <div class="code">
+<span class="cc"># Requires .NET 10 SDK</span>
+<span class="ccmd">git clone</span> <span class="cstr">https://github.com/marcsalot/fhir-mcp.git</span>
+<span class="ccmd">cd</span> fhir-mcp && dotnet build && dotnet test
+<span class="ccmd">dotnet run</span> --project src/FhirMcp.Server -- search --name <span class="cstr">"reyna ziemann"</span></div>
+    <p style="font-size:13px;color:var(--muted);margin-top:16px;line-height:1.8">Connects to the <a href="https://r4.smarthealthit.org/">SMART Health IT R4 sandbox</a> by default — public synthetic data, no sign-in needed. Add it to Claude Desktop via <code style="font-family:var(--mono);font-size:11px;color:var(--muted)">Settings › Developer › Edit Config</code> or to Claude Code with <code style="font-family:var(--mono);font-size:11px;color:var(--muted)">claude mcp add fhir ...</code>.</p>
+    <div style="display:flex;gap:12px;margin-top:22px;flex-wrap:wrap">
+      <a href="index.html" class="btn btn-p">Live demo</a>
+      <a href="https://github.com/marcsalot/fhir-mcp#getting-started" class="btn btn-g" target="_blank">Setup guide</a>
+      <a href="https://github.com/marcsalot/fhir-mcp" class="btn btn-g" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+<div class="f-i">
+  <p>Synthetic data only. Built to explore FHIR + AI tooling.</p>
+  <div class="f-links">
+    <a href="https://github.com/marcsalot/fhir-mcp" target="_blank">GitHub</a>
+    <a href="https://github.com/marcsalot/fhir-mcp#readme" target="_blank">Docs</a>
+    <a href="index.html">Demo</a>
+  </div>
+</div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    document.querySelectorAll('.bf').forEach(el => el.style.width = el.dataset.w + '%');
+    obs.disconnect();
+  }
+}, {threshold: .15});
+const b = document.getElementById('benches');
+if (b) obs.observe(b);
+</script>
+</body>
+</html>
