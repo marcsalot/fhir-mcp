@@ -237,103 +237,42 @@
     <h2 style="text-align:center;margin-bottom:8px;">Ask anything about Reyna Ziemann</h2>
     <p style="text-align:center;color:var(--muted);margin-bottom:36px;">Synthetic patient on the SMART Health IT R4 sandbox. All data is public test data.</p>
 
-    <div class="pill-tabs" id="demo-tabs">
-      <button class="pill-tab active" onclick="showDemo(0,this)">Health summary</button>
-      <button class="pill-tab" onclick="showDemo(1,this)">Blood sugar trend</button>
-      <button class="pill-tab" onclick="showDemo(2,this)">Medications vs conditions</button>
-      <button class="pill-tab" onclick="showDemo(3,this)">Allergies</button>
+    <!-- Suggested questions -->
+    <div class="pill-tabs">
+      <button class="pill-tab" onclick="ask(this.textContent)">What is she being treated for?</button>
+      <button class="pill-tab" onclick="ask(this.textContent)">Is her blood sugar improving?</button>
+      <button class="pill-tab" onclick="ask(this.textContent)">Do her meds match her conditions?</button>
+      <button class="pill-tab" onclick="ask(this.textContent)">Any allergy concerns?</button>
     </div>
 
-    <div id="demo-panels">
-
-      <!-- Panel 0 -->
-      <div class="demo-panel demo-wrap">
-        <div class="demo-header">
-          <div class="demo-dots"><span></span><span></span><span></span></div>
-          <span class="demo-title">Claude Desktop · fhir-mcp connected</span>
-        </div>
-        <div class="demo-body">
-          <div class="chat-bubble chat-user">Find Reyna Ziemann and give me a health summary.</div>
-          <div class="chat-bubble chat-claude">
-            <strong>Reyna Ziemann</strong>, 52F, Raynham MA. <br><br>
-            <strong>Active conditions (7):</strong> Hypertension (1992), prediabetes (2014), obesity (2008), chronic sinusitis (2020), perennial allergic rhinitis (1976), history of cardiac arrest (1983).<br><br>
-            <strong>Medications (5):</strong> Hydrochlorothiazide 25mg (hypertension), fluticasone &amp; albuterol inhalers, diphenhydramine, ferrous sulfate 325mg.<br><br>
-            <strong>Latest vitals:</strong> BP 154/90 (elevated), BMI 29.6, weight 77.9 kg.<br><br>
-            <strong>Last visit:</strong> 2020-05-27, ambulatory asthma follow-up.
-          </div>
-        </div>
-        <div class="demo-stats">
-          <div class="demo-stat">Raw FHIR: <strong>117 KB</strong></div>
-          <div class="demo-stat">Sent to model: <strong>2.2 KB</strong></div>
-          <div class="demo-stat">Compression: <strong>53×</strong></div>
-          <div class="demo-stat">API calls: <strong>6 parallel</strong></div>
-        </div>
+    <!-- Chat window -->
+    <div class="demo-wrap" id="chat-wrap">
+      <div class="demo-header">
+        <div class="demo-dots"><span></span><span></span><span></span></div>
+        <span class="demo-title" id="chat-status">Ask a question about Reyna Ziemann</span>
       </div>
-
-      <!-- Panel 1 -->
-      <div class="demo-panel demo-wrap" style="display:none;">
-        <div class="demo-header">
-          <div class="demo-dots"><span></span><span></span><span></span></div>
-          <span class="demo-title">Claude Desktop · fhir-mcp connected</span>
-        </div>
-        <div class="demo-body">
-          <div class="chat-bubble chat-user">Is her blood sugar getting better or worse over time?</div>
-          <div class="chat-bubble chat-claude">
-            Her A1c trend shows <strong>improvement after 2016</strong>:<br><br>
-            2014: 6.06% &nbsp;→&nbsp; 2016: <strong>6.37%</strong> (peak) &nbsp;→&nbsp; 2018: 6.19% &nbsp;→&nbsp; 2018: 5.95% &nbsp;→&nbsp; 2020: 5.96%<br><br>
-            She peaked in 2016 and has since come down to the high end of the prediabetic range. Her most recent reading of 5.96% is just below the 6.0% threshold. No medication for prediabetes is on file, suggesting lifestyle management.
-          </div>
-        </div>
-        <div class="demo-stats">
-          <div class="demo-stat">Lab results scanned: <strong>102</strong></div>
-          <div class="demo-stat">A1c results found: <strong>5</strong></div>
-          <div class="demo-stat">Word matching used: <strong>yes</strong></div>
-        </div>
+      <div class="demo-body" id="chat-messages" style="min-height:160px;">
+        <p style="color:var(--muted);font-size:13px;">
+          Type a question or click one of the suggestions above. Claude reads live FHIR data
+          from the SMART Health IT sandbox and answers in real time.
+        </p>
       </div>
-
-      <!-- Panel 2 -->
-      <div class="demo-panel demo-wrap" style="display:none;">
-        <div class="demo-header">
-          <div class="demo-dots"><span></span><span></span><span></span></div>
-          <span class="demo-title">Claude Desktop · fhir-mcp connected</span>
-        </div>
-        <div class="demo-body">
-          <div class="chat-bubble chat-user">Do her medications line up with her conditions?</div>
-          <div class="chat-bubble chat-claude">
-            Mostly yes, with two gaps worth flagging:<br><br>
-            <strong>Well matched:</strong> Hydrochlorothiazide → hypertension. Fluticasone + albuterol + diphenhydramine → allergic rhinitis.<br><br>
-            <strong>Unexplained:</strong> Ferrous sulfate (iron) is prescribed but no anemia diagnosis appears in the active conditions.<br><br>
-            <strong>Gaps:</strong> No medication for prediabetes (acceptable if managed by lifestyle), and no cardiac medications despite a cardiac arrest history in 1983 — this is worth flagging. Her BP of 154/90 is also still elevated on the diuretic alone.
-          </div>
-        </div>
-        <div class="demo-stats">
-          <div class="demo-stat">Conditions checked: <strong>7</strong></div>
-          <div class="demo-stat">Medications checked: <strong>5</strong></div>
-          <div class="demo-stat">Raw FHIR: <strong>117 KB → 2.2 KB</strong></div>
-        </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;">
+        <input id="question-input" type="text" placeholder="e.g. What medications is she on?"
+          style="flex:1;padding:9px 14px;background:var(--surf2);border:1px solid var(--border);
+                 border-radius:6px;color:var(--text);font:14px inherit;outline:none;"
+          onkeydown="if(event.key==='Enter')ask(this.value)"
+          onfocus="this.style.borderColor='var(--primary)'"
+          onblur="this.style.borderColor='var(--border)'">
+        <button onclick="ask(document.getElementById('question-input').value)"
+          style="padding:9px 20px;background:var(--primary);color:#fff;border:none;border-radius:6px;
+                 font:500 14px inherit;cursor:pointer;">Ask</button>
       </div>
-
-      <!-- Panel 3 -->
-      <div class="demo-panel demo-wrap" style="display:none;">
-        <div class="demo-header">
-          <div class="demo-dots"><span></span><span></span><span></span></div>
-          <span class="demo-title">Claude Desktop · fhir-mcp connected</span>
-        </div>
-        <div class="demo-body">
-          <div class="chat-bubble chat-user">Anything in her allergy list to watch for?</div>
-          <div class="chat-bubble chat-claude">
-            She has <strong>10 allergies on file</strong>, all listed as low criticality. None are drug allergies — all are environmental or food:<br><br>
-            Peanuts, shellfish, dairy, soy, mould, tree pollen, grass pollen, house dust mite, animal dander, bee venom.<br><br>
-            Given she is on diphenhydramine (Benadryl), her rhinitis and food allergies appear actively managed. No high-severity or anaphylaxis risk is documented. The allergy list says "none on file" for drugs, but that absence should be confirmed — it may mean none are recorded rather than none exist.
-          </div>
-        </div>
-        <div class="demo-stats">
-          <div class="demo-stat">Allergies retrieved: <strong>10</strong></div>
-          <div class="demo-stat">Drug allergies: <strong>0 on record</strong></div>
-          <div class="demo-stat">Raw FHIR: <strong>62 KB → 1.1 KB</strong></div>
-        </div>
+      <div class="demo-stats" id="chat-stats" style="display:none;">
+        <div class="demo-stat">Source: <strong>SMART Health IT R4 sandbox</strong></div>
+        <div class="demo-stat">Patient: <strong>Reyna Ziemann (synthetic)</strong></div>
+        <div class="demo-stat">Model: <strong>claude-opus-4-7</strong></div>
       </div>
-
     </div>
   </div>
 </section>
@@ -455,10 +394,65 @@
 </footer>
 
 <script>
-function showDemo(idx, btn) {
-  document.querySelectorAll('.demo-panel').forEach((p, i) => p.style.display = i === idx ? '' : 'none');
-  document.querySelectorAll('.pill-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
+const API = 'https://theticketarchive.net/fhir-api/ask';
+
+async function ask(question) {
+  if (!question || !question.trim()) return;
+  const input = document.getElementById('question-input');
+  const msgs  = document.getElementById('chat-messages');
+  const stats = document.getElementById('chat-stats');
+  const status = document.getElementById('chat-status');
+
+  input.value = question.trim();
+
+  // User bubble
+  msgs.innerHTML = `<div class="chat-bubble chat-user">${escHtml(question.trim())}</div>`;
+  const reply = document.createElement('div');
+  reply.className = 'chat-bubble chat-claude';
+  reply.textContent = '';
+  msgs.appendChild(reply);
+  stats.style.display = 'none';
+  status.textContent = 'Fetching from FHIR sandbox…';
+
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({question: question.trim()})
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    status.textContent = 'Claude is answering…';
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, {stream: true});
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6);
+        if (data === '[DONE]') break;
+        try {
+          const {text} = JSON.parse(data);
+          reply.innerHTML += escHtml(text).replace(/\n/g, '<br>');
+        } catch {}
+      }
+    }
+    status.textContent = 'Ask a question about Reyna Ziemann';
+    stats.style.display = 'flex';
+  } catch (e) {
+    reply.innerHTML = `<span style="color:var(--red)">Error: ${escHtml(e.message)}</span>`;
+    status.textContent = 'Ask a question about Reyna Ziemann';
+  }
+  input.value = '';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 </script>
 
